@@ -1,0 +1,621 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #0d0d1a;
+    min-height: 100vh;
+    color: #e0e0e0;
+    overflow-x: hidden;
+}
+
+/* ===== 배경 빛 아우라 ===== */
+.aura-bg {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(
+        ellipse at center,
+        rgba(240, 192, 64, 0.12) 0%,
+        rgba(240, 192, 64, 0.06) 30%,
+        rgba(200, 160, 50, 0.03) 50%,
+        transparent 70%
+    );
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 0;
+    animation: aura-pulse 4s ease-in-out infinite alternate;
+}
+
+@keyframes aura-pulse {
+    from {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0.8;
+    }
+    to {
+        transform: translate(-50%, -50%) scale(1.15);
+        opacity: 1;
+    }
+}
+
+/* ===== 화면 전환 ===== */
+.screen {
+    display: none;
+    min-height: 100vh;
+    padding: 20px;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    z-index: 1;
+}
+
+.screen.active {
+    display: flex;
+}
+
+/* ===== 성경책 스타일 ===== */
+.bible-book {
+    max-width: 560px;
+    width: 100%;
+    margin: 0 auto;
+    position: relative;
+    perspective: 1200px;
+}
+
+.book-spine {
+    position: absolute;
+    left: -12px;
+    top: 5px;
+    bottom: 5px;
+    width: 14px;
+    background: linear-gradient(90deg, #5a3e28, #7a5a3e, #5a3e28);
+    border-radius: 3px 0 0 3px;
+    box-shadow: -2px 0 6px rgba(0,0,0,0.4);
+    z-index: 2;
+}
+
+.book-page {
+    background: linear-gradient(135deg, #2a2218 0%, #1e1a14 50%, #252018 100%);
+    border: 2px solid #5a4a35;
+    border-left: none;
+    border-radius: 0 8px 8px 0;
+    padding: 30px 25px;
+    position: relative;
+    box-shadow:
+        4px 4px 20px rgba(0,0,0,0.5),
+        inset 0 0 60px rgba(240, 192, 64, 0.03);
+    transform-origin: left center;
+}
+
+/* 페이지 장식 */
+.page-ornament {
+    height: 20px;
+    background: repeating-linear-gradient(
+        90deg,
+        transparent,
+        transparent 8px,
+        rgba(201, 169, 110, 0.15) 8px,
+        rgba(201, 169, 110, 0.15) 10px
+    );
+    margin: 10px -5px;
+    position: relative;
+}
+
+.page-ornament.top::after,
+.page-ornament.bottom::after {
+    content: '~';
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    color: rgba(201, 169, 110, 0.4);
+    font-size: 1.2rem;
+}
+
+.page-ornament.top { margin-bottom: 15px; }
+.page-ornament.bottom { margin-top: 15px; }
+
+/* ===== 시작 화면 ===== */
+#start-screen h1 {
+    font-size: 2.2rem;
+    text-align: center;
+    color: #f0c040;
+    margin-bottom: 8px;
+    text-shadow: 0 2px 15px rgba(240, 192, 64, 0.4);
+    font-family: Georgia, serif;
+}
+
+.subtitle {
+    text-align: center;
+    font-size: 1rem;
+    color: #b0a080;
+    margin-bottom: 20px;
+    font-style: italic;
+}
+
+.bible-illustration {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.start-illust svg {
+    width: 140px;
+    height: auto;
+    filter: drop-shadow(0 0 10px rgba(240, 192, 64, 0.2));
+}
+
+.difficulty-select {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.difficulty-select h3 {
+    font-size: 0.95rem;
+    color: #b0a080;
+    margin-bottom: 12px;
+}
+
+.btn-group {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.difficulty-btn {
+    padding: 10px 24px;
+    border: 2px solid #5a4a35;
+    background: transparent;
+    color: #c0b090;
+    border-radius: 25px;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.difficulty-btn:hover {
+    border-color: #f0c040;
+    color: #f0c040;
+}
+
+.difficulty-btn.selected {
+    background: linear-gradient(135deg, #f0c040, #d4a020);
+    border-color: #f0c040;
+    color: #1a1a0e;
+    font-weight: 600;
+}
+
+.primary-btn {
+    display: block;
+    width: 100%;
+    padding: 15px;
+    background: linear-gradient(135deg, #f0c040, #d4a020);
+    color: #1a1a0e;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.05rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    margin-top: 15px;
+    letter-spacing: 1px;
+}
+
+.primary-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(240, 192, 64, 0.4);
+}
+
+.secondary-btn {
+    display: block;
+    width: 100%;
+    padding: 13px;
+    background: transparent;
+    color: #b0a080;
+    border: 2px solid #5a4a35;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-top: 10px;
+}
+
+.secondary-btn:hover {
+    border-color: #f0c040;
+    color: #f0c040;
+}
+
+/* ===== 퀴즈 화면 ===== */
+.quiz-header {
+    margin-bottom: 20px;
+}
+
+.progress-info {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+    color: #b0a080;
+}
+
+.progress-bar {
+    height: 5px;
+    background: #3a3020;
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 12px;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #f0c040, #d4a020);
+    border-radius: 3px;
+    transition: width 0.4s ease;
+    width: 0%;
+}
+
+.timer {
+    text-align: center;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #f0c040;
+    font-family: Georgia, serif;
+}
+
+.timer.warning {
+    color: #e85050;
+    animation: pulse 0.5s infinite alternate;
+}
+
+@keyframes pulse {
+    from { opacity: 1; }
+    to { opacity: 0.5; }
+}
+
+.question-text {
+    font-size: 1.1rem;
+    line-height: 1.7;
+    color: #f0e8d0;
+    margin-bottom: 20px;
+    padding: 18px;
+    background: rgba(240, 192, 64, 0.04);
+    border-radius: 8px;
+    border-left: 3px solid #c9a96e;
+    font-family: Georgia, serif;
+}
+
+.options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.option-btn {
+    padding: 14px 18px;
+    background: rgba(240, 192, 64, 0.04);
+    border: 2px solid #4a3a28;
+    border-radius: 8px;
+    color: #d0c0a0;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-align: left;
+}
+
+.option-btn:hover {
+    border-color: #c9a96e;
+    background: rgba(240, 192, 64, 0.08);
+}
+
+.option-btn.correct {
+    border-color: #5cb85c;
+    background: rgba(92, 184, 92, 0.12);
+    color: #7ddf7d;
+}
+
+.option-btn.wrong {
+    border-color: #e85050;
+    background: rgba(232, 80, 80, 0.12);
+    color: #f08080;
+}
+
+.option-btn.disabled {
+    pointer-events: none;
+}
+
+/* ===== 피드백 ===== */
+.feedback {
+    margin-top: 18px;
+    padding: 18px;
+    border-radius: 8px;
+    background: rgba(240, 192, 64, 0.04);
+    text-align: center;
+    border: 1px solid #4a3a28;
+}
+
+.feedback.hidden {
+    display: none;
+}
+
+#feedback-text {
+    font-size: 1.05rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.bible-verse {
+    font-size: 0.85rem;
+    color: #b0a080;
+    font-style: italic;
+    margin-bottom: 12px;
+    line-height: 1.5;
+    font-family: Georgia, serif;
+}
+
+/* ===== 결과 화면 ===== */
+#result-screen .book-page {
+    text-align: center;
+}
+
+.blessing-illustration {
+    margin-bottom: 10px;
+}
+
+.blessing-illustration svg {
+    width: 200px;
+    height: auto;
+    filter: drop-shadow(0 0 15px rgba(240, 192, 64, 0.3));
+}
+
+.light-rays {
+    animation: rays-glow 3s ease-in-out infinite alternate;
+}
+
+@keyframes rays-glow {
+    from { opacity: 0.6; }
+    to { opacity: 1; }
+}
+
+.sparkles text {
+    animation: sparkle 2s ease-in-out infinite alternate;
+}
+
+.sparkles text:nth-child(2) { animation-delay: 0.3s; }
+.sparkles text:nth-child(3) { animation-delay: 0.6s; }
+.sparkles text:nth-child(4) { animation-delay: 0.9s; }
+.sparkles text:nth-child(5) { animation-delay: 1.2s; }
+.sparkles text:nth-child(6) { animation-delay: 1.5s; }
+
+@keyframes sparkle {
+    from { opacity: 0.2; }
+    to { opacity: 1; }
+}
+
+#result-screen h2 {
+    font-size: 1.8rem;
+    color: #f0c040;
+    margin-bottom: 20px;
+    font-family: Georgia, serif;
+    text-shadow: 0 2px 10px rgba(240, 192, 64, 0.3);
+}
+
+.result-circle {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    border: 4px solid #c9a96e;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 15px;
+    box-shadow: 0 0 25px rgba(240, 192, 64, 0.15);
+    background: rgba(240, 192, 64, 0.04);
+}
+
+#result-score {
+    font-size: 2.8rem;
+    font-weight: 700;
+    color: #f0c040;
+    font-family: Georgia, serif;
+}
+
+.result-total {
+    font-size: 1.1rem;
+    color: #b0a080;
+}
+
+.result-message {
+    font-size: 1.1rem;
+    color: #d0c0a0;
+    margin-bottom: 20px;
+    font-style: italic;
+    font-family: Georgia, serif;
+}
+
+.result-details {
+    text-align: left;
+    margin-bottom: 15px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.result-item {
+    padding: 12px 14px;
+    margin-bottom: 8px;
+    border-radius: 6px;
+    background: rgba(240, 192, 64, 0.03);
+    font-size: 0.85rem;
+    line-height: 1.4;
+    border: 1px solid #3a3020;
+}
+
+.result-item.correct {
+    border-left: 4px solid #5cb85c;
+}
+
+.result-item.wrong {
+    border-left: 4px solid #e85050;
+}
+
+.result-item .correct-answer {
+    color: #7ddf7d;
+    font-size: 0.8rem;
+    margin-top: 4px;
+}
+
+.result-item .verse-ref {
+    color: #b0a080;
+    font-size: 0.78rem;
+    font-style: italic;
+    margin-top: 6px;
+    padding-top: 6px;
+    border-top: 1px solid rgba(201, 169, 110, 0.15);
+    line-height: 1.4;
+    font-family: Georgia, serif;
+}
+
+/* 스크롤바 */
+.result-details::-webkit-scrollbar {
+    width: 5px;
+}
+
+.result-details::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.result-details::-webkit-scrollbar-thumb {
+    background: #5a4a35;
+    border-radius: 3px;
+}
+
+/* ===== 페이지 넘김 효과 ===== */
+.page-turn-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 100;
+}
+
+.page-turn-overlay.turning {
+    pointer-events: all;
+}
+
+.page-turn-overlay.turning::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(30, 26, 20, 0.2) 40%,
+        rgba(42, 34, 24, 0.9) 48%,
+        rgba(250, 240, 220, 0.15) 50%,
+        rgba(42, 34, 24, 0.9) 52%,
+        rgba(30, 26, 20, 0.2) 60%,
+        transparent 100%
+    );
+    animation: page-flip 0.6s ease-in-out forwards;
+}
+
+@keyframes page-flip {
+    0% {
+        transform: translateX(100%);
+    }
+    50% {
+        transform: translateX(0%);
+    }
+    100% {
+        transform: translateX(-100%);
+    }
+}
+
+/* 퀴즈 페이지 전환 애니메이션 */
+.book-page.page-exit {
+    animation: page-out 0.3s ease-in forwards;
+}
+
+.book-page.page-enter {
+    animation: page-in 0.3s ease-out forwards;
+}
+
+@keyframes page-out {
+    from {
+        opacity: 1;
+        transform: rotateY(0deg);
+    }
+    to {
+        opacity: 0;
+        transform: rotateY(-15deg);
+    }
+}
+
+@keyframes page-in {
+    from {
+        opacity: 0;
+        transform: rotateY(15deg);
+    }
+    to {
+        opacity: 1;
+        transform: rotateY(0deg);
+    }
+}
+
+/* ===== 반응형 ===== */
+@media (max-width: 480px) {
+    .book-page {
+        padding: 20px 16px;
+    }
+
+    .book-spine {
+        width: 10px;
+        left: -10px;
+    }
+
+    #start-screen h1 {
+        font-size: 1.8rem;
+    }
+
+    .start-illust svg {
+        width: 110px;
+    }
+
+    .question-text {
+        font-size: 1rem;
+        padding: 14px;
+    }
+
+    .option-btn {
+        padding: 12px 14px;
+        font-size: 0.9rem;
+    }
+
+    .result-circle {
+        width: 120px;
+        height: 120px;
+    }
+
+    #result-score {
+        font-size: 2.2rem;
+    }
+
+    .blessing-illustration svg {
+        width: 160px;
+    }
+
+    .aura-bg {
+        width: 400px;
+        height: 400px;
+    }
+}

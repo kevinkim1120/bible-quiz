@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>마가복음 퀴즈</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- 배경 빛 아우라 효과 -->
+    <div class="aura-bg"></div>
+
+    <!-- 시작 화면 -->
+    <div id="start-screen" class="screen active">
+        <div class="bible-book">
+            <div class="book-spine"></div>
+            <div class="book-page">
+                <div class="page-ornament top"></div>
+                <h1>&#x271E; 마가복음 퀴즈</h1>
+                <p class="subtitle">마가복음 1장~16장을 깊이 공부해보세요!</p>
+                <div class="bible-illustration start-illust">
+                    <!-- 성경책 SVG 일러스트 -->
+                    <svg viewBox="0 0 120 100" xmlns="http://www.w3.org/2000/svg">
+                        <g transform="translate(20,10)">
+                            <!-- 펼쳐진 성경책 -->
+                            <path d="M40 15 Q20 10 0 20 L0 70 Q20 60 40 65 Z" fill="#f5e6c8" stroke="#c9a96e" stroke-width="1.5"/>
+                            <path d="M40 15 Q60 10 80 20 L80 70 Q60 60 40 65 Z" fill="#faf0dc" stroke="#c9a96e" stroke-width="1.5"/>
+                            <line x1="40" y1="15" x2="40" y2="65" stroke="#c9a96e" stroke-width="1"/>
+                            <!-- 텍스트 라인 -->
+                            <line x1="8" y1="30" x2="32" y2="28" stroke="#d4b896" stroke-width="1" opacity="0.6"/>
+                            <line x1="8" y1="38" x2="32" y2="36" stroke="#d4b896" stroke-width="1" opacity="0.6"/>
+                            <line x1="8" y1="46" x2="32" y2="44" stroke="#d4b896" stroke-width="1" opacity="0.6"/>
+                            <line x1="48" y1="28" x2="72" y2="30" stroke="#d4b896" stroke-width="1" opacity="0.6"/>
+                            <line x1="48" y1="36" x2="72" y2="38" stroke="#d4b896" stroke-width="1" opacity="0.6"/>
+                            <line x1="48" y1="44" x2="72" y2="46" stroke="#d4b896" stroke-width="1" opacity="0.6"/>
+                            <!-- 십자가 -->
+                            <rect x="36" y="0" width="8" height="14" rx="1" fill="#c9a96e"/>
+                            <rect x="32" y="4" width="16" height="5" rx="1" fill="#c9a96e"/>
+                            <!-- 빛 -->
+                            <circle cx="40" cy="7" r="18" fill="url(#glow)" opacity="0.3"/>
+                        </g>
+                        <defs>
+                            <radialGradient id="glow">
+                                <stop offset="0%" stop-color="#f0c040"/>
+                                <stop offset="100%" stop-color="transparent"/>
+                            </radialGradient>
+                        </defs>
+                    </svg>
+                </div>
+                <div class="difficulty-select">
+                    <h3>난이도 선택</h3>
+                    <div class="btn-group">
+                        <button class="difficulty-btn selected" data-difficulty="easy">쉬움</button>
+                        <button class="difficulty-btn" data-difficulty="medium">보통</button>
+                        <button class="difficulty-btn" data-difficulty="hard">어려움</button>
+                    </div>
+                </div>
+                <button id="start-btn" class="primary-btn">퀴즈 시작</button>
+                <div class="page-ornament bottom"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 퀴즈 화면 -->
+    <div id="quiz-screen" class="screen">
+        <div class="bible-book">
+            <div class="book-spine"></div>
+            <div class="book-page" id="quiz-page">
+                <div class="page-ornament top"></div>
+                <div class="quiz-header">
+                    <div class="progress-info">
+                        <span id="question-number">1 / 10</span>
+                        <span id="score-display">점수: 0</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div id="progress-fill" class="progress-fill"></div>
+                    </div>
+                    <div id="timer" class="timer">30</div>
+                </div>
+                <div class="quiz-body">
+                    <p id="question-text" class="question-text"></p>
+                    <div id="options" class="options"></div>
+                </div>
+                <div id="feedback" class="feedback hidden">
+                    <p id="feedback-text"></p>
+                    <p id="bible-verse" class="bible-verse"></p>
+                    <button id="next-btn" class="primary-btn">다음 문제</button>
+                </div>
+                <div class="page-ornament bottom"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 결과 화면 -->
+    <div id="result-screen" class="screen">
+        <div class="bible-book result-book">
+            <div class="book-spine"></div>
+            <div class="book-page">
+                <div class="page-ornament top"></div>
+
+                <!-- 은총 일러스트 -->
+                <div class="blessing-illustration">
+                    <svg viewBox="0 0 200 140" xmlns="http://www.w3.org/2000/svg">
+                        <!-- 빛줄기 -->
+                        <g class="light-rays">
+                            <line x1="100" y1="0" x2="30" y2="140" stroke="#f0c040" stroke-width="1" opacity="0.15"/>
+                            <line x1="100" y1="0" x2="60" y2="140" stroke="#f0c040" stroke-width="1" opacity="0.2"/>
+                            <line x1="100" y1="0" x2="90" y2="140" stroke="#f0c040" stroke-width="1.5" opacity="0.25"/>
+                            <line x1="100" y1="0" x2="110" y2="140" stroke="#f0c040" stroke-width="1.5" opacity="0.25"/>
+                            <line x1="100" y1="0" x2="140" y2="140" stroke="#f0c040" stroke-width="1" opacity="0.2"/>
+                            <line x1="100" y1="0" x2="170" y2="140" stroke="#f0c040" stroke-width="1" opacity="0.15"/>
+                        </g>
+                        <!-- 구름 -->
+                        <ellipse cx="100" cy="18" rx="50" ry="14" fill="#f5e6c8" opacity="0.4"/>
+                        <ellipse cx="80" cy="14" rx="30" ry="10" fill="#faf0dc" opacity="0.5"/>
+                        <ellipse cx="120" cy="14" rx="30" ry="10" fill="#faf0dc" opacity="0.5"/>
+                        <!-- 손 (은총) -->
+                        <g transform="translate(75, 20)" fill="#f5e6c8" stroke="#c9a96e" stroke-width="1">
+                            <path d="M25 0 C20 5, 10 10, 8 18 C6 22, 10 24, 14 22 L18 18 C16 25, 14 32, 16 35 C18 38, 22 36, 22 32 L24 25 C24 30, 22 38, 26 40 C30 42, 32 38, 30 32 L28 25 C30 30, 28 38, 34 38 C38 38, 38 34, 36 28 L32 18 C36 22, 40 24, 42 20 C44 16, 40 12, 36 14 L25 0 Z"/>
+                        </g>
+                        <!-- 별/빛 파티클 -->
+                        <g class="sparkles">
+                            <text x="50" y="60" font-size="8" fill="#f0c040" opacity="0.6">&#x2726;</text>
+                            <text x="140" y="50" font-size="10" fill="#f0c040" opacity="0.5">&#x2726;</text>
+                            <text x="70" y="90" font-size="6" fill="#f0c040" opacity="0.7">&#x2726;</text>
+                            <text x="130" y="85" font-size="7" fill="#f0c040" opacity="0.6">&#x2726;</text>
+                            <text x="90" y="110" font-size="9" fill="#f0c040" opacity="0.4">&#x2726;</text>
+                            <text x="110" y="70" font-size="5" fill="#f0c040" opacity="0.8">&#x2726;</text>
+                        </g>
+                        <!-- 비둘기 -->
+                        <g transform="translate(85, 45) scale(0.6)" fill="#faf0dc" stroke="#c9a96e" stroke-width="1">
+                            <path d="M20 20 C15 15, 5 12, 0 18 C-2 22, 5 25, 10 22 L15 22 C10 28, 5 30, 8 35 C12 38, 18 32, 18 28 C22 32, 28 35, 32 30 C35 25, 30 20, 25 22 Z"/>
+                            <path d="M0 18 C-5 14, -8 16, -5 20" fill="none" stroke="#c9a96e" stroke-width="1"/>
+                        </g>
+                    </svg>
+                </div>
+
+                <h2>퀴즈 결과</h2>
+                <div class="result-circle">
+                    <span id="result-score">0</span>
+                    <span class="result-total">/ 10</span>
+                </div>
+                <p id="result-message" class="result-message"></p>
+                <div id="result-details" class="result-details"></div>
+                <button id="retry-btn" class="primary-btn">다시 도전하기</button>
+                <button id="home-btn" class="secondary-btn">처음으로</button>
+                <div class="page-ornament bottom"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 페이지 넘김 효과 오버레이 -->
+    <div id="page-turn-overlay" class="page-turn-overlay"></div>
+
+    <script src="questions.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

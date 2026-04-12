@@ -1,6 +1,7 @@
 // 상태 관리
 let state = {
-    difficulty: "easy",
+    mode: "bank",       // "bank" or "exam"
+    questionCount: 10,  // 10 or 20
     questions: [],
     currentIndex: 0,
     score: 0,
@@ -23,6 +24,9 @@ const elements = {
     timer: document.getElementById("timer"),
     questionText: document.getElementById("question-text"),
     options: document.getElementById("options"),
+    subjectiveArea: document.getElementById("subjective-area"),
+    subjectiveInput: document.getElementById("subjective-input"),
+    submitAnswerBtn: document.getElementById("submit-answer-btn"),
     feedback: document.getElementById("feedback"),
     feedbackText: document.getElementById("feedback-text"),
     bibleVerse: document.getElementById("bible-verse"),
@@ -30,76 +34,118 @@ const elements = {
     resultScore: document.getElementById("result-score"),
     resultMessage: document.getElementById("result-message"),
     resultDetails: document.getElementById("result-details"),
-    pageTurnOverlay: document.getElementById("page-turn-overlay"),
     quizPage: document.getElementById("quiz-page")
 };
 
-// 화면 전환 (페이지 넘김 효과 포함)
+// 부드러운 화면 전환
 function showScreen(screenName) {
-    const overlay = elements.pageTurnOverlay;
-    overlay.classList.add("turning");
-
-    setTimeout(() => {
-        Object.values(screens).forEach(s => s.classList.remove("active"));
-        screens[screenName].classList.add("active");
-    }, 300);
-
-    setTimeout(() => {
-        overlay.classList.remove("turning");
-    }, 600);
-}
-
-// 퀴즈 페이지 내 전환 효과
-function turnQuizPage(callback) {
-    const page = elements.quizPage;
-    page.classList.add("page-exit");
-
-    setTimeout(() => {
-        page.classList.remove("page-exit");
-        callback();
-        page.classList.add("page-enter");
+    const currentScreen = document.querySelector('.screen.active');
+    if (currentScreen) {
+        currentScreen.classList.add('screen-exit');
         setTimeout(() => {
-            page.classList.remove("page-enter");
+            currentScreen.classList.remove('active', 'screen-exit');
+            screens[screenName].classList.add('active', 'screen-enter');
+            setTimeout(() => {
+                screens[screenName].classList.remove('screen-enter');
+            }, 400);
         }, 300);
-    }, 300);
+    } else {
+        screens[screenName].classList.add('active');
+    }
 }
 
-// 난이도 버튼
-document.querySelectorAll(".difficulty-btn").forEach(btn => {
+// 문제 간 부드러운 전환
+function transitionQuestion(callback) {
+    const page = elements.quizPage;
+    page.classList.add('content-fade-out');
+    setTimeout(() => {
+        callback();
+        page.classList.remove('content-fade-out');
+        page.classList.add('content-fade-in');
+        setTimeout(() => {
+            page.classList.remove('content-fade-in');
+        }, 350);
+    }, 250);
+}
+
+// 모드 버튼
+document.querySelectorAll(".mode-btn").forEach(btn => {
     btn.addEventListener("click", () => {
-        document.querySelectorAll(".difficulty-btn").forEach(b => b.classList.remove("selected"));
+        document.querySelectorAll(".mode-btn").forEach(b => b.classList.remove("selected"));
         btn.classList.add("selected");
-        state.difficulty = btn.dataset.difficulty;
+        state.questionCount = parseInt(btn.dataset.mode);
     });
 });
 
 // 퀴즈 시작
-document.getElementById("start-btn").addEventListener("click", startQuiz);
-document.getElementById("retry-btn").addEventListener("click", startQuiz);
+document.getElementById("start-btn").addEventListener("click", () => {
+    state.mode = "bank";
+    startQuiz();
+});
+
+// 기출문제 시작
+document.getElementById("exam-btn").addEventListener("click", () => {
+    state.mode = "exam";
+    startQuiz();
+});
+
+// 다시 도전
+document.getElementById("retry-btn").addEventListener("click", () => startQuiz());
+
+// 틀린 문제 다시 풀기
+document.getElementById("wrong-retry-btn").addEventListener("click", retryWrongAnswers);
+
+// 처음으로
 document.getElementById("home-btn").addEventListener("click", () => showScreen("start"));
+
+// 다음 문제
 elements.nextBtn.addEventListener("click", nextQuestion);
 
+// 주관식 정답 제출
+elements.submitAnswerBtn.addEventListener("click", submitSubjectiveAnswer);
+elements.subjectiveInput.addEventListener("keypress", (e) => {
+    if (e.key === "Enter") submitSubjectiveAnswer();
+});
+
 function startQuiz() {
-    // 난이도별 문제 필터링
-    let filtered = quizQuestions.filter(q => q.difficulty === state.difficulty);
+    let selected;
 
-    // 셔플 후 10문제 선택
-    filtered = shuffle(filtered);
-    state.questions = filtered.slice(0, 10);
-
-    // 문제가 부족하면 다른 난이도에서 보충
-    if (state.questions.length < 10) {
-        let extra = quizQuestions.filter(q => !state.questions.includes(q));
-        extra = shuffle(extra);
-        state.questions = state.questions.concat(extra.slice(0, 10 - state.questions.length));
+    if (state.mode === "exam") {
+        // 기출문제 모드: 기출문제 전체 풀기
+        selected = shuffle([...examQuestions]);
+    } else {
+        // 일반 모드: 문제은행에서 랜덤 선택
+        let pool = shuffle([...bankQuestions]);
+        selected = pool.slice(0, state.questionCount);
     }
 
+    state.questions = selected;
     state.currentIndex = 0;
     state.score = 0;
     state.answers = [];
 
     showScreen("quiz");
-    setTimeout(() => loadQuestion(), 350);
+    setTimeout(() => loadQuestion(), 400);
+}
+
+function retryWrongAnswers() {
+    // 틀린 문제들만 모아서 다시 풀기
+    const wrongQuestions = [];
+    state.answers.forEach((ans, idx) => {
+        if (!ans.isCorrect) {
+            wrongQuestions.push(state.questions[idx]);
+        }
+    });
+
+    if (wrongQuestions.length === 0) return;
+
+    state.questions = shuffle(wrongQuestions);
+    state.currentIndex = 0;
+    state.score = 0;
+    state.answers = [];
+
+    showScreen("quiz");
+    setTimeout(() => loadQuestion(), 400);
 }
 
 function loadQuestion() {
@@ -112,17 +158,37 @@ function loadQuestion() {
     elements.progressFill.style.width = `${((state.currentIndex) / total) * 100}%`;
 
     // 질문 표시
-    elements.questionText.textContent = q.question;
+    const typeLabel = q.type === "subjective" ? "[주관식] " : "";
+    elements.questionText.textContent = typeLabel + q.question;
 
-    // 보기 표시
-    elements.options.innerHTML = "";
-    q.options.forEach((option, index) => {
-        const btn = document.createElement("button");
-        btn.className = "option-btn";
-        btn.textContent = `${["A", "B", "C", "D"][index]}. ${option}`;
-        btn.addEventListener("click", () => selectAnswer(index));
-        elements.options.appendChild(btn);
-    });
+    // 객관식 vs 주관식 분기
+    if (q.type === "subjective") {
+        // 주관식: 보기 숨기고 입력란 표시
+        elements.options.innerHTML = "";
+        elements.options.classList.add("hidden");
+        elements.subjectiveArea.classList.remove("hidden");
+        elements.subjectiveInput.value = "";
+        elements.subjectiveInput.focus();
+    } else {
+        // 객관식: 보기 표시, 입력란 숨기기
+        elements.subjectiveArea.classList.add("hidden");
+        elements.options.classList.remove("hidden");
+        elements.options.innerHTML = "";
+
+        // 보기 순서 랜덤화
+        const indices = q.options.map((_, i) => i);
+        const shuffledIndices = shuffle(indices);
+
+        shuffledIndices.forEach((origIdx) => {
+            const option = q.options[origIdx];
+            const btn = document.createElement("button");
+            btn.className = "option-btn";
+            btn.textContent = `${["A", "B", "C", "D"][shuffledIndices.indexOf(origIdx)]}. ${option}`;
+            btn.dataset.origIndex = origIdx;
+            btn.addEventListener("click", () => selectAnswer(origIdx, shuffledIndices));
+            elements.options.appendChild(btn);
+        });
+    }
 
     // 피드백 숨기기
     elements.feedback.classList.add("hidden");
@@ -133,9 +199,7 @@ function loadQuestion() {
 
 function startTimer() {
     clearInterval(state.timer);
-
-    const timeByDifficulty = { easy: 30, medium: 25, hard: 20 };
-    state.timeLeft = timeByDifficulty[state.difficulty] || 30;
+    state.timeLeft = 30;
     elements.timer.textContent = state.timeLeft;
     elements.timer.classList.remove("warning");
 
@@ -149,35 +213,43 @@ function startTimer() {
 
         if (state.timeLeft <= 0) {
             clearInterval(state.timer);
-            selectAnswer(-1); // 시간 초과
+            const q = state.questions[state.currentIndex];
+            if (q.type === "subjective") {
+                handleSubjectiveResult("", true);
+            } else {
+                selectAnswer(-1, []);
+            }
         }
     }, 1000);
 }
 
-function selectAnswer(selectedIndex) {
+function selectAnswer(selectedOrigIndex, shuffledIndices) {
     clearInterval(state.timer);
 
     const q = state.questions[state.currentIndex];
     const buttons = document.querySelectorAll(".option-btn");
-    const isCorrect = selectedIndex === q.answer;
+    const isCorrect = selectedOrigIndex === q.answer;
 
     // 모든 버튼 비활성화
     buttons.forEach(btn => btn.classList.add("disabled"));
 
-    // 정답 표시
-    buttons[q.answer].classList.add("correct");
+    // 정답/오답 표시 (원래 인덱스 기준)
+    buttons.forEach(btn => {
+        const origIdx = parseInt(btn.dataset.origIndex);
+        if (origIdx === q.answer) {
+            btn.classList.add("correct");
+        }
+        if (origIdx === selectedOrigIndex && !isCorrect) {
+            btn.classList.add("wrong");
+        }
+    });
 
-    // 오답 표시
-    if (selectedIndex >= 0 && !isCorrect) {
-        buttons[selectedIndex].classList.add("wrong");
-    }
-
-    // 점수 업데이트
+    // 점수 및 피드백
     if (isCorrect) {
         state.score++;
         elements.feedbackText.textContent = "정답입니다!";
         elements.feedbackText.style.color = "#7ddf7d";
-    } else if (selectedIndex === -1) {
+    } else if (selectedOrigIndex === -1) {
         elements.feedbackText.textContent = "시간 초과!";
         elements.feedbackText.style.color = "#f08080";
     } else {
@@ -189,32 +261,106 @@ function selectAnswer(selectedIndex) {
     elements.bibleVerse.textContent = q.verse;
     elements.feedback.classList.remove("hidden");
 
-    // 마지막 문제면 버튼 텍스트 변경
+    updateNextButton();
+
+    // 답변 기록
+    state.answers.push({
+        question: q.question,
+        selected: selectedOrigIndex >= 0 ? q.options[selectedOrigIndex] : "시간 초과",
+        correct: q.options[q.answer],
+        isCorrect: isCorrect,
+        verse: q.verse,
+        type: q.type
+    });
+}
+
+function submitSubjectiveAnswer() {
+    const userAnswer = elements.subjectiveInput.value.trim();
+    if (!userAnswer) return;
+    handleSubjectiveResult(userAnswer, false);
+}
+
+function handleSubjectiveResult(userAnswer, isTimeout) {
+    clearInterval(state.timer);
+
+    const q = state.questions[state.currentIndex];
+
+    // 정답 여부 판단 (허용 답안 리스트에서 부분 일치 확인)
+    let isCorrect = false;
+    if (!isTimeout && q.acceptableAnswers) {
+        const normalizedUser = userAnswer.replace(/\s+/g, '').toLowerCase();
+        isCorrect = q.acceptableAnswers.some(ans => {
+            const normalizedAns = ans.replace(/\s+/g, '').toLowerCase();
+            return normalizedUser.includes(normalizedAns) || normalizedAns.includes(normalizedUser);
+        });
+    }
+
+    // 입력 비활성화
+    elements.subjectiveInput.disabled = true;
+    elements.submitAnswerBtn.disabled = true;
+
+    // 정답 표시
+    if (isCorrect) {
+        state.score++;
+        elements.subjectiveInput.classList.add("input-correct");
+        elements.feedbackText.textContent = "정답입니다!";
+        elements.feedbackText.style.color = "#7ddf7d";
+    } else if (isTimeout) {
+        elements.subjectiveInput.classList.add("input-wrong");
+        elements.feedbackText.textContent = "시간 초과!";
+        elements.feedbackText.style.color = "#f08080";
+    } else {
+        elements.subjectiveInput.classList.add("input-wrong");
+        elements.feedbackText.textContent = "틀렸습니다!";
+        elements.feedbackText.style.color = "#f08080";
+    }
+
+    // 정답 보여주기
+    const correctDisplay = document.createElement("div");
+    correctDisplay.className = "correct-answer-display";
+    correctDisplay.textContent = `정답: ${q.subjectiveAnswer}`;
+    elements.subjectiveArea.appendChild(correctDisplay);
+
+    elements.scoreDisplay.textContent = `점수: ${state.score}`;
+    elements.bibleVerse.textContent = q.verse;
+    elements.feedback.classList.remove("hidden");
+
+    updateNextButton();
+
+    // 답변 기록
+    state.answers.push({
+        question: q.question,
+        selected: isTimeout ? "시간 초과" : userAnswer,
+        correct: q.subjectiveAnswer,
+        isCorrect: isCorrect,
+        verse: q.verse,
+        type: q.type
+    });
+}
+
+function updateNextButton() {
     if (state.currentIndex >= state.questions.length - 1) {
         elements.nextBtn.textContent = "결과 보기";
     } else {
         elements.nextBtn.textContent = "다음 문제";
     }
-
-    // 답변 기록 (성경 구절 포함)
-    state.answers.push({
-        question: q.question,
-        selected: selectedIndex >= 0 ? q.options[selectedIndex] : "시간 초과",
-        correct: q.options[q.answer],
-        isCorrect: isCorrect,
-        verse: q.verse
-    });
 }
 
 function nextQuestion() {
+    // 주관식 관련 초기화
+    elements.subjectiveInput.disabled = false;
+    elements.submitAnswerBtn.disabled = false;
+    elements.subjectiveInput.classList.remove("input-correct", "input-wrong");
+    const correctDisplay = elements.subjectiveArea.querySelector(".correct-answer-display");
+    if (correctDisplay) correctDisplay.remove();
+
     state.currentIndex++;
 
     if (state.currentIndex >= state.questions.length) {
         showScreen("result");
-        setTimeout(() => showResult(), 350);
+        setTimeout(() => showResult(), 400);
     } else {
-        // 페이지 넘김 효과와 함께 다음 문제 로드
-        turnQuizPage(() => loadQuestion());
+        transitionQuestion(() => loadQuestion());
     }
 }
 
@@ -239,13 +385,24 @@ function showResult() {
     }
     elements.resultMessage.textContent = message;
 
-    // 상세 결과 (정답 + 성경 구절 표시)
+    // 틀린 문제 다시 풀기 버튼
+    const wrongCount = state.answers.filter(a => !a.isCorrect).length;
+    const wrongRetryBtn = document.getElementById("wrong-retry-btn");
+    if (wrongCount > 0) {
+        wrongRetryBtn.style.display = "block";
+        wrongRetryBtn.textContent = `\u274C 틀린 문제 다시 풀기 (${wrongCount}문제)`;
+    } else {
+        wrongRetryBtn.style.display = "none";
+    }
+
+    // 상세 결과
     elements.resultDetails.innerHTML = "";
     state.answers.forEach((answer, index) => {
         const item = document.createElement("div");
         item.className = `result-item ${answer.isCorrect ? "correct" : "wrong"}`;
+        const typeTag = answer.type === "subjective" ? '<span class="type-tag subjective">주관식</span>' : '<span class="type-tag objective">객관식</span>';
         item.innerHTML = `
-            <strong>Q${index + 1}. ${answer.question}</strong><br>
+            <strong>${typeTag} Q${index + 1}. ${answer.question}</strong><br>
             내 답: ${answer.selected}
             <div class="correct-answer">정답: ${answer.correct}</div>
             <div class="verse-ref">${answer.verse}</div>

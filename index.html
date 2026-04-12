@@ -9,6 +9,8 @@
 <body>
     <!-- 배경 빛 아우라 효과 -->
     <div class="aura-bg"></div>
+    <!-- 성령의 빛 파티클 -->
+    <div class="spirit-particles"></div>
 
     <!-- 시작 화면 -->
     <div id="start-screen" class="screen active">
@@ -19,43 +21,126 @@
                 <h1>&#x271E; 마가복음 퀴즈</h1>
                 <p class="subtitle">마가복음 1장~16장을 깊이 공부해보세요!</p>
                 <div class="bible-illustration start-illust">
-                    <!-- 성경책 SVG 일러스트 -->
-                    <svg viewBox="0 0 120 100" xmlns="http://www.w3.org/2000/svg">
-                        <g transform="translate(20,10)">
-                            <!-- 펼쳐진 성경책 -->
-                            <path d="M40 15 Q20 10 0 20 L0 70 Q20 60 40 65 Z" fill="#f5e6c8" stroke="#c9a96e" stroke-width="1.5"/>
-                            <path d="M40 15 Q60 10 80 20 L80 70 Q60 60 40 65 Z" fill="#faf0dc" stroke="#c9a96e" stroke-width="1.5"/>
-                            <line x1="40" y1="15" x2="40" y2="65" stroke="#c9a96e" stroke-width="1"/>
-                            <!-- 텍스트 라인 -->
-                            <line x1="8" y1="30" x2="32" y2="28" stroke="#d4b896" stroke-width="1" opacity="0.6"/>
-                            <line x1="8" y1="38" x2="32" y2="36" stroke="#d4b896" stroke-width="1" opacity="0.6"/>
-                            <line x1="8" y1="46" x2="32" y2="44" stroke="#d4b896" stroke-width="1" opacity="0.6"/>
-                            <line x1="48" y1="28" x2="72" y2="30" stroke="#d4b896" stroke-width="1" opacity="0.6"/>
-                            <line x1="48" y1="36" x2="72" y2="38" stroke="#d4b896" stroke-width="1" opacity="0.6"/>
-                            <line x1="48" y1="44" x2="72" y2="46" stroke="#d4b896" stroke-width="1" opacity="0.6"/>
-                            <!-- 십자가 -->
-                            <rect x="36" y="0" width="8" height="14" rx="1" fill="#c9a96e"/>
-                            <rect x="32" y="4" width="16" height="5" rx="1" fill="#c9a96e"/>
-                            <!-- 빛 -->
-                            <circle cx="40" cy="7" r="18" fill="url(#glow)" opacity="0.3"/>
-                        </g>
+                    <svg viewBox="0 0 200 180" xmlns="http://www.w3.org/2000/svg">
                         <defs>
-                            <radialGradient id="glow">
-                                <stop offset="0%" stop-color="#f0c040"/>
-                                <stop offset="100%" stop-color="transparent"/>
+                            <radialGradient id="divine-glow" cx="50%" cy="20%" r="50%">
+                                <stop offset="0%" stop-color="#f0c040" stop-opacity="0.5"/>
+                                <stop offset="50%" stop-color="#f0c040" stop-opacity="0.15"/>
+                                <stop offset="100%" stop-color="#f0c040" stop-opacity="0"/>
                             </radialGradient>
+                            <linearGradient id="cross-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#d4a030"/>
+                                <stop offset="50%" stop-color="#f0c040"/>
+                                <stop offset="100%" stop-color="#b8902a"/>
+                            </linearGradient>
+                            <linearGradient id="page-l" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" stop-color="#e0cca8"/>
+                                <stop offset="100%" stop-color="#f2e2c4"/>
+                            </linearGradient>
+                            <linearGradient id="page-r" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" stop-color="#f5ecd8"/>
+                                <stop offset="100%" stop-color="#e8dbc0"/>
+                            </linearGradient>
+                            <linearGradient id="cover-g" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" stop-color="#6b4a2e"/>
+                                <stop offset="100%" stop-color="#4a3320"/>
+                            </linearGradient>
                         </defs>
+
+                        <!-- 신성한 빛 배경 -->
+                        <ellipse cx="100" cy="45" rx="80" ry="55" fill="url(#divine-glow)">
+                            <animate attributeName="rx" values="75;85;75" dur="4s" repeatCount="indefinite"/>
+                            <animate attributeName="opacity" values="0.8;1;0.8" dur="4s" repeatCount="indefinite"/>
+                        </ellipse>
+
+                        <!-- 빛줄기 -->
+                        <g opacity="0.2">
+                            <line x1="100" y1="5" x2="30" y2="170" stroke="#f0c040" stroke-width="0.8"/>
+                            <line x1="100" y1="5" x2="55" y2="170" stroke="#f0c040" stroke-width="1.2"/>
+                            <line x1="100" y1="5" x2="80" y2="170" stroke="#f0c040" stroke-width="1.5"/>
+                            <line x1="100" y1="5" x2="120" y2="170" stroke="#f0c040" stroke-width="1.5"/>
+                            <line x1="100" y1="5" x2="145" y2="170" stroke="#f0c040" stroke-width="1.2"/>
+                            <line x1="100" y1="5" x2="170" y2="170" stroke="#f0c040" stroke-width="0.8"/>
+                        </g>
+
+                        <!-- 십자가 -->
+                        <g transform="translate(86, 2)">
+                            <rect x="8" y="0" width="14" height="52" rx="2.5" fill="url(#cross-grad)"/>
+                            <rect x="-2" y="13" width="34" height="12" rx="2.5" fill="url(#cross-grad)"/>
+                            <rect x="12" y="2" width="4" height="46" rx="1" fill="#f5d060" opacity="0.35"/>
+                            <rect x="1" y="16" width="28" height="4" rx="1" fill="#f5d060" opacity="0.25"/>
+                            <circle cx="15" cy="19" r="22" fill="#f0c040" opacity="0.08">
+                                <animate attributeName="r" values="18;24;18" dur="3s" repeatCount="indefinite"/>
+                            </circle>
+                        </g>
+
+                        <!-- 비둘기 -->
+                        <g transform="translate(48, 30) scale(0.8)" fill="#f5ecd8" stroke="#c9a96e" stroke-width="0.7">
+                            <ellipse cx="18" cy="17" rx="9" ry="6"/>
+                            <circle cx="26" cy="12" r="4.5"/>
+                            <path d="M30 12 L35 11 L31 13.5 Z" fill="#d4a030" stroke="none"/>
+                            <circle cx="27.5" cy="11" r="0.9" fill="#5a3e28"/>
+                            <circle cx="27" cy="10.5" r="0.3" fill="#f5ecd8"/>
+                            <path d="M14 14 Q4 5 -2 1 Q7 7 11 11 Z" fill="#ebe0cc"/>
+                            <path d="M13 15 Q1 9 -5 4 Q5 11 10 13 Z" fill="#e5d8c0"/>
+                            <path d="M12 16 Q-1 12 -6 7 Q4 14 9 15 Z" fill="#ddd0b8"/>
+                            <path d="M8 19 Q3 24 0 27 Q5 22 8 21 Z" fill="#ebe0cc"/>
+                            <path d="M30 13 Q35 15 38 14" fill="none" stroke="#7a9a40" stroke-width="0.7"/>
+                            <ellipse cx="37" cy="12.5" rx="2.8" ry="1.3" fill="#8ab050" transform="rotate(-15 37 12.5)"/>
+                            <ellipse cx="40" cy="13.5" rx="2.2" ry="1" fill="#8ab050" transform="rotate(10 40 13.5)"/>
+                        </g>
+
+                        <!-- 펼쳐진 성경책 -->
+                        <g transform="translate(30, 75)">
+                            <path d="M68 5 Q38 -2 8 8 L5 78 Q38 68 68 73 Z" fill="url(#cover-g)" stroke="#3a2515" stroke-width="1"/>
+                            <path d="M72 5 Q102 -2 132 8 L135 78 Q102 68 72 73 Z" fill="url(#cover-g)" stroke="#3a2515" stroke-width="1"/>
+                            <path d="M70 8 Q42 2 14 12 L14 75 Q42 65 70 70 Z" fill="url(#page-l)" stroke="#c9a96e" stroke-width="1"/>
+                            <path d="M70 8 Q98 2 126 12 L126 75 Q98 65 70 70 Z" fill="url(#page-r)" stroke="#c9a96e" stroke-width="1"/>
+                            <path d="M68 8 L68 70 L72 70 L72 8 Z" fill="#b08840" opacity="0.3"/>
+                            <g opacity="0.35" stroke="#a08060" stroke-width="0.7">
+                                <line x1="24" y1="22" x2="60" y2="20"/>
+                                <line x1="24" y1="29" x2="58" y2="27"/>
+                                <line x1="24" y1="36" x2="54" y2="34"/>
+                                <line x1="24" y1="43" x2="60" y2="41"/>
+                                <line x1="24" y1="50" x2="52" y2="48"/>
+                                <line x1="24" y1="57" x2="57" y2="55"/>
+                            </g>
+                            <g opacity="0.35" stroke="#a08060" stroke-width="0.7">
+                                <line x1="80" y1="20" x2="116" y2="22"/>
+                                <line x1="80" y1="27" x2="114" y2="29"/>
+                                <line x1="80" y1="34" x2="110" y2="36"/>
+                                <line x1="80" y1="41" x2="116" y2="43"/>
+                                <line x1="80" y1="48" x2="108" y2="50"/>
+                                <line x1="80" y1="55" x2="113" y2="57"/>
+                            </g>
+                        </g>
+
+                        <!-- 반짝이는 별 -->
+                        <circle cx="35" cy="50" r="1.5" fill="#f0c040" opacity="0.5">
+                            <animate attributeName="opacity" values="0.15;0.7;0.15" dur="2.5s" repeatCount="indefinite"/>
+                        </circle>
+                        <circle cx="165" cy="60" r="1.2" fill="#f0c040" opacity="0.6">
+                            <animate attributeName="opacity" values="0.2;0.8;0.2" dur="2s" repeatCount="indefinite"/>
+                        </circle>
+                        <circle cx="150" cy="28" r="1" fill="#f0c040" opacity="0.4">
+                            <animate attributeName="opacity" values="0.1;0.6;0.1" dur="3s" repeatCount="indefinite"/>
+                        </circle>
+                        <circle cx="42" cy="100" r="1.3" fill="#f0c040" opacity="0.5">
+                            <animate attributeName="opacity" values="0.2;0.7;0.2" dur="2.2s" repeatCount="indefinite"/>
+                        </circle>
+                        <text x="28" y="75" font-size="6" fill="#f0c040" opacity="0.35" font-family="serif">&#x2726;</text>
+                        <text x="168" y="88" font-size="5" fill="#f0c040" opacity="0.3" font-family="serif">&#x2726;</text>
                     </svg>
                 </div>
-                <div class="difficulty-select">
-                    <h3>난이도 선택</h3>
+                <div class="mode-select">
+                    <h3>문제 수 선택</h3>
                     <div class="btn-group">
-                        <button class="difficulty-btn selected" data-difficulty="easy">쉬움</button>
-                        <button class="difficulty-btn" data-difficulty="medium">보통</button>
-                        <button class="difficulty-btn" data-difficulty="hard">어려움</button>
+                        <button class="mode-btn selected" data-mode="10">10문제 풀기</button>
+                        <button class="mode-btn" data-mode="20">20문제 풀기</button>
                     </div>
                 </div>
                 <button id="start-btn" class="primary-btn">퀴즈 시작</button>
+                <button id="exam-btn" class="secondary-btn exam-btn">&#x1F4DC; 기출문제 풀기</button>
                 <div class="page-ornament bottom"></div>
             </div>
         </div>
@@ -80,6 +165,10 @@
                 <div class="quiz-body">
                     <p id="question-text" class="question-text"></p>
                     <div id="options" class="options"></div>
+                    <div id="subjective-area" class="subjective-area hidden">
+                        <input type="text" id="subjective-input" class="subjective-input" placeholder="정답을 입력하세요..." autocomplete="off">
+                        <button id="submit-answer-btn" class="primary-btn submit-btn">정답 제출</button>
+                    </div>
                 </div>
                 <div id="feedback" class="feedback hidden">
                     <p id="feedback-text"></p>
@@ -98,40 +187,130 @@
             <div class="book-page">
                 <div class="page-ornament top"></div>
 
-                <!-- 은총 일러스트 -->
+                <!-- 천사 은총 일러스트 -->
                 <div class="blessing-illustration">
-                    <svg viewBox="0 0 200 140" xmlns="http://www.w3.org/2000/svg">
+                    <svg viewBox="0 0 200 160" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <radialGradient id="glory-light" cx="50%" cy="25%" r="55%">
+                                <stop offset="0%" stop-color="#f0c040" stop-opacity="0.45"/>
+                                <stop offset="40%" stop-color="#f0c040" stop-opacity="0.12"/>
+                                <stop offset="100%" stop-color="#f0c040" stop-opacity="0"/>
+                            </radialGradient>
+                            <linearGradient id="wing-l" x1="100%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" stop-color="#f5ecd8"/>
+                                <stop offset="100%" stop-color="#ddd0b8"/>
+                            </linearGradient>
+                            <linearGradient id="wing-r" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#f5ecd8"/>
+                                <stop offset="100%" stop-color="#ddd0b8"/>
+                            </linearGradient>
+                            <linearGradient id="robe-g" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" stop-color="#f5ecd8"/>
+                                <stop offset="100%" stop-color="#e0d0b0"/>
+                            </linearGradient>
+                        </defs>
+
+                        <!-- 영광의 빛 -->
+                        <ellipse cx="100" cy="45" rx="90" ry="55" fill="url(#glory-light)">
+                            <animate attributeName="rx" values="85;95;85" dur="4s" repeatCount="indefinite"/>
+                        </ellipse>
+
                         <!-- 빛줄기 -->
-                        <g class="light-rays">
-                            <line x1="100" y1="0" x2="30" y2="140" stroke="#f0c040" stroke-width="1" opacity="0.15"/>
-                            <line x1="100" y1="0" x2="60" y2="140" stroke="#f0c040" stroke-width="1" opacity="0.2"/>
-                            <line x1="100" y1="0" x2="90" y2="140" stroke="#f0c040" stroke-width="1.5" opacity="0.25"/>
-                            <line x1="100" y1="0" x2="110" y2="140" stroke="#f0c040" stroke-width="1.5" opacity="0.25"/>
-                            <line x1="100" y1="0" x2="140" y2="140" stroke="#f0c040" stroke-width="1" opacity="0.2"/>
-                            <line x1="100" y1="0" x2="170" y2="140" stroke="#f0c040" stroke-width="1" opacity="0.15"/>
+                        <g class="light-rays" opacity="0.18">
+                            <line x1="100" y1="0" x2="20" y2="160" stroke="#f0c040" stroke-width="0.8"/>
+                            <line x1="100" y1="0" x2="45" y2="160" stroke="#f0c040" stroke-width="1"/>
+                            <line x1="100" y1="0" x2="70" y2="160" stroke="#f0c040" stroke-width="1.3"/>
+                            <line x1="100" y1="0" x2="130" y2="160" stroke="#f0c040" stroke-width="1.3"/>
+                            <line x1="100" y1="0" x2="155" y2="160" stroke="#f0c040" stroke-width="1"/>
+                            <line x1="100" y1="0" x2="180" y2="160" stroke="#f0c040" stroke-width="0.8"/>
                         </g>
-                        <!-- 구름 -->
-                        <ellipse cx="100" cy="18" rx="50" ry="14" fill="#f5e6c8" opacity="0.4"/>
-                        <ellipse cx="80" cy="14" rx="30" ry="10" fill="#faf0dc" opacity="0.5"/>
-                        <ellipse cx="120" cy="14" rx="30" ry="10" fill="#faf0dc" opacity="0.5"/>
-                        <!-- 손 (은총) -->
-                        <g transform="translate(75, 20)" fill="#f5e6c8" stroke="#c9a96e" stroke-width="1">
-                            <path d="M25 0 C20 5, 10 10, 8 18 C6 22, 10 24, 14 22 L18 18 C16 25, 14 32, 16 35 C18 38, 22 36, 22 32 L24 25 C24 30, 22 38, 26 40 C30 42, 32 38, 30 32 L28 25 C30 30, 28 38, 34 38 C38 38, 38 34, 36 28 L32 18 C36 22, 40 24, 42 20 C44 16, 40 12, 36 14 L25 0 Z"/>
+
+                        <!-- 천사 -->
+                        <g transform="translate(100, 18)">
+                            <!-- 후광 -->
+                            <ellipse cx="0" cy="-3" rx="14" ry="5" fill="none" stroke="#f0c040" stroke-width="1.5" opacity="0.6">
+                                <animate attributeName="opacity" values="0.4;0.8;0.4" dur="3s" repeatCount="indefinite"/>
+                            </ellipse>
+
+                            <!-- 왼쪽 날개 -->
+                            <g transform="translate(-12, 16)">
+                                <path d="M0 0 Q-14 -14 -32 -22 Q-28 -8 -23 2 Q-18 10 -13 14 Q-8 17 -4 16 Z"
+                                      fill="url(#wing-l)" stroke="#c9a96e" stroke-width="0.6"/>
+                                <path d="M-4 6 Q-14 -4 -26 -13" fill="none" stroke="#d4c4a0" stroke-width="0.5" opacity="0.5"/>
+                                <path d="M-3 9 Q-11 1 -20 -6" fill="none" stroke="#d4c4a0" stroke-width="0.4" opacity="0.4"/>
+                                <path d="M-2 13 Q-9 6 -16 1" fill="none" stroke="#d4c4a0" stroke-width="0.4" opacity="0.3"/>
+                            </g>
+
+                            <!-- 오른쪽 날개 -->
+                            <g transform="translate(12, 16)">
+                                <path d="M0 0 Q14 -14 32 -22 Q28 -8 23 2 Q18 10 13 14 Q8 17 4 16 Z"
+                                      fill="url(#wing-r)" stroke="#c9a96e" stroke-width="0.6"/>
+                                <path d="M4 6 Q14 -4 26 -13" fill="none" stroke="#d4c4a0" stroke-width="0.5" opacity="0.5"/>
+                                <path d="M3 9 Q11 1 20 -6" fill="none" stroke="#d4c4a0" stroke-width="0.4" opacity="0.4"/>
+                                <path d="M2 13 Q9 6 16 1" fill="none" stroke="#d4c4a0" stroke-width="0.4" opacity="0.3"/>
+                            </g>
+
+                            <!-- 얼굴 -->
+                            <circle cx="0" cy="7" r="9.5" fill="#f5e6c8" stroke="#c9a96e" stroke-width="0.7"/>
+                            <!-- 머리카락 -->
+                            <path d="M-7 3 Q-9 -3 -4 -5 Q0 -7 4 -5 Q9 -3 7 3" fill="#c9a96e" stroke="none" opacity="0.5"/>
+                            <!-- 눈 -->
+                            <ellipse cx="-3.2" cy="7" rx="1.1" ry="1.4" fill="#5a3e28"/>
+                            <ellipse cx="3.2" cy="7" rx="1.1" ry="1.4" fill="#5a3e28"/>
+                            <circle cx="-2.8" cy="6.5" r="0.35" fill="#f5e6c8"/>
+                            <circle cx="3.6" cy="6.5" r="0.35" fill="#f5e6c8"/>
+                            <!-- 미소 -->
+                            <path d="M-2.5 11 Q0 13 2.5 11" fill="none" stroke="#b08860" stroke-width="0.6"/>
+                            <!-- 볼 터치 -->
+                            <circle cx="-5.5" cy="10" r="1.8" fill="#e8a080" opacity="0.25"/>
+                            <circle cx="5.5" cy="10" r="1.8" fill="#e8a080" opacity="0.25"/>
+
+                            <!-- 몸/의복 -->
+                            <path d="M-11 17 Q-13 48 -16 78 L16 78 Q13 48 11 17 Q7 15 0 16 Q-7 15 -11 17 Z"
+                                  fill="url(#robe-g)" stroke="#c9a96e" stroke-width="0.7"/>
+                            <path d="M-4 23 Q-2 48 -5 73" fill="none" stroke="#c9a96e" stroke-width="0.4" opacity="0.35"/>
+                            <path d="M4 23 Q2 48 5 73" fill="none" stroke="#c9a96e" stroke-width="0.4" opacity="0.35"/>
+                            <path d="M0 19 Q-0.5 48 0 76" fill="none" stroke="#c9a96e" stroke-width="0.3" opacity="0.25"/>
+
+                            <!-- 팔 -->
+                            <path d="M-11 28 Q-18 33 -23 30 Q-20 36 -11 33" fill="url(#robe-g)" stroke="#c9a96e" stroke-width="0.5"/>
+                            <path d="M11 28 Q18 33 23 30 Q20 36 11 33" fill="url(#robe-g)" stroke="#c9a96e" stroke-width="0.5"/>
+                            <!-- 손 -->
+                            <circle cx="-23" cy="31" r="2.8" fill="#f5e6c8" stroke="#c9a96e" stroke-width="0.4"/>
+                            <circle cx="23" cy="31" r="2.8" fill="#f5e6c8" stroke="#c9a96e" stroke-width="0.4"/>
                         </g>
-                        <!-- 별/빛 파티클 -->
+
+                        <!-- 비둘기 (우측 하단) -->
+                        <g transform="translate(148, 95) scale(0.55)" fill="#f5ecd8" stroke="#c9a96e" stroke-width="0.6">
+                            <ellipse cx="0" cy="0" rx="8" ry="5"/>
+                            <circle cx="7" cy="-3" r="3.5"/>
+                            <path d="M10 -3 L14 -4 L11 -2 Z" fill="#d4a030" stroke="none"/>
+                            <circle cx="8" cy="-3.5" r="0.6" fill="#5a3e28"/>
+                            <path d="M-4 -2 Q-12 -8 -15 -12 Q-8 -5 -3 -1 Z" fill="#ebe0cc"/>
+                            <path d="M-5 0 Q-14 -5 -18 -8 Q-10 -2 -4 1 Z" fill="#e5d8c0"/>
+                        </g>
+
+                        <!-- 작은 십자가 (좌측 하단) -->
+                        <g transform="translate(48, 108) scale(0.5)">
+                            <rect x="0" y="0" width="8" height="28" rx="1.5" fill="#c9a96e" opacity="0.45"/>
+                            <rect x="-5" y="7" width="18" height="7" rx="1.5" fill="#c9a96e" opacity="0.45"/>
+                        </g>
+
+                        <!-- 반짝이 -->
                         <g class="sparkles">
-                            <text x="50" y="60" font-size="8" fill="#f0c040" opacity="0.6">&#x2726;</text>
-                            <text x="140" y="50" font-size="10" fill="#f0c040" opacity="0.5">&#x2726;</text>
-                            <text x="70" y="90" font-size="6" fill="#f0c040" opacity="0.7">&#x2726;</text>
-                            <text x="130" y="85" font-size="7" fill="#f0c040" opacity="0.6">&#x2726;</text>
-                            <text x="90" y="110" font-size="9" fill="#f0c040" opacity="0.4">&#x2726;</text>
-                            <text x="110" y="70" font-size="5" fill="#f0c040" opacity="0.8">&#x2726;</text>
+                            <text x="28" y="45" font-size="7" fill="#f0c040" opacity="0.4" font-family="serif">&#x2726;</text>
+                            <text x="168" y="55" font-size="5" fill="#f0c040" opacity="0.35" font-family="serif">&#x2726;</text>
+                            <text x="38" y="95" font-size="6" fill="#f0c040" opacity="0.45" font-family="serif">&#x2726;</text>
+                            <text x="158" y="130" font-size="5" fill="#f0c040" opacity="0.3" font-family="serif">&#x2726;</text>
+                            <text x="75" y="135" font-size="4" fill="#f0c040" opacity="0.35" font-family="serif">&#x2726;</text>
+                            <text x="125" y="140" font-size="6" fill="#f0c040" opacity="0.4" font-family="serif">&#x2726;</text>
                         </g>
-                        <!-- 비둘기 -->
-                        <g transform="translate(85, 45) scale(0.6)" fill="#faf0dc" stroke="#c9a96e" stroke-width="1">
-                            <path d="M20 20 C15 15, 5 12, 0 18 C-2 22, 5 25, 10 22 L15 22 C10 28, 5 30, 8 35 C12 38, 18 32, 18 28 C22 32, 28 35, 32 30 C35 25, 30 20, 25 22 Z"/>
-                            <path d="M0 18 C-5 14, -8 16, -5 20" fill="none" stroke="#c9a96e" stroke-width="1"/>
-                        </g>
+                        <circle cx="30" cy="65" r="1.3" fill="#f0c040" opacity="0.5">
+                            <animate attributeName="opacity" values="0.2;0.7;0.2" dur="2.5s" repeatCount="indefinite"/>
+                        </circle>
+                        <circle cx="170" cy="75" r="1" fill="#f0c040" opacity="0.4">
+                            <animate attributeName="opacity" values="0.1;0.6;0.1" dur="3s" repeatCount="indefinite"/>
+                        </circle>
                     </svg>
                 </div>
 
@@ -143,6 +322,7 @@
                 <p id="result-message" class="result-message"></p>
                 <div id="result-details" class="result-details"></div>
                 <button id="retry-btn" class="primary-btn">다시 도전하기</button>
+                <button id="wrong-retry-btn" class="secondary-btn" style="display:none;">&#x274C; 틀린 문제 다시 풀기</button>
                 <button id="home-btn" class="secondary-btn">처음으로</button>
                 <div class="page-ornament bottom"></div>
             </div>
@@ -152,7 +332,17 @@
     <!-- 페이지 넘김 효과 오버레이 -->
     <div id="page-turn-overlay" class="page-turn-overlay"></div>
 
+    <script>
+    window.onerror = function(msg, src, line, col) {
+        document.body.insertAdjacentHTML('afterbegin',
+            '<div style="position:fixed;top:0;left:0;right:0;background:red;color:white;padding:15px;z-index:9999;font-size:14px;">' +
+            'JS Error: ' + msg + '<br>File: ' + src + ' Line: ' + line +
+            '</div>');
+    };
+    </script>
     <script src="questions.js"></script>
+    <script>console.log('questions.js loaded', typeof examQuestions, typeof bankQuestions);</script>
     <script src="app.js"></script>
+    <script>console.log('app.js loaded');</script>
 </body>
 </html>

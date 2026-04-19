@@ -133,10 +133,10 @@
                     </svg>
                 </div>
                 <div class="mode-select">
-                    <h3>문제 수 선택</h3>
+                    <h3>난이도 선택</h3>
                     <div class="btn-group">
-                        <button class="mode-btn selected" data-mode="10">10문제 풀기</button>
-                        <button class="mode-btn" data-mode="20">20문제 풀기</button>
+                        <button class="mode-btn selected" data-difficulty="easy">&#x1F331; 쉬움</button>
+                        <button class="mode-btn" data-difficulty="hard">&#x1F525; 어려움</button>
                     </div>
                 </div>
                 <button id="start-btn" class="primary-btn">퀴즈 시작</button>
@@ -332,17 +332,7 @@
     <!-- 페이지 넘김 효과 오버레이 -->
     <div id="page-turn-overlay" class="page-turn-overlay"></div>
 
-    <script>
-    window.onerror = function(msg, src, line, col) {
-        document.body.insertAdjacentHTML('afterbegin',
-            '<div style="position:fixed;top:0;left:0;right:0;background:red;color:white;padding:15px;z-index:9999;font-size:14px;">' +
-            'JS Error: ' + msg + '<br>File: ' + src + ' Line: ' + line +
-            '</div>');
-    };
-    </script>
     <script src="questions.js"></script>
-    <script>console.log('questions.js loaded', typeof examQuestions, typeof bankQuestions);</script>
     <script src="app.js"></script>
-    <script>console.log('app.js loaded');</script>
 </body>
 </html>

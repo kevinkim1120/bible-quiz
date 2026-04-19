@@ -1,7 +1,7 @@
 // 상태 관리
 let state = {
-    mode: "bank",       // "bank" or "exam"
-    questionCount: 10,  // 10 or 20
+    mode: "bank",           // "bank" or "exam"
+    difficulty: "easy",     // "easy" or "hard"
     questions: [],
     currentIndex: 0,
     score: 0,
@@ -68,12 +68,12 @@ function transitionQuestion(callback) {
     }, 250);
 }
 
-// 모드 버튼
+// 난이도 버튼
 document.querySelectorAll(".mode-btn").forEach(btn => {
     btn.addEventListener("click", () => {
         document.querySelectorAll(".mode-btn").forEach(b => b.classList.remove("selected"));
         btn.classList.add("selected");
-        state.questionCount = parseInt(btn.dataset.mode);
+        state.difficulty = btn.dataset.difficulty;
     });
 });
 
@@ -111,12 +111,12 @@ function startQuiz() {
     let selected;
 
     if (state.mode === "exam") {
-        // 기출문제 모드: 기출문제 전체 풀기
+        // 기출문제 모드: 기출 10문제 전체 풀기
         selected = shuffle([...examQuestions]);
     } else {
-        // 일반 모드: 문제은행에서 랜덤 선택
-        let pool = shuffle([...bankQuestions]);
-        selected = pool.slice(0, state.questionCount);
+        // 문제은행 모드: 난이도로 필터링 후 랜덤 10문제 출제
+        const pool = bankQuestions.filter(q => q.difficulty === state.difficulty);
+        selected = shuffle(pool).slice(0, 10);
     }
 
     state.questions = selected;

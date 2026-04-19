@@ -1,3 +1,22 @@
+// ===== 인트로 오버레이 =====
+(function handleIntro() {
+    const overlay = document.getElementById("intro-overlay");
+    if (!overlay) return;
+    const skipBtn = document.getElementById("intro-skip");
+    let removed = false;
+    const finish = () => {
+        if (removed) return;
+        removed = true;
+        overlay.classList.add("skip");
+        setTimeout(() => overlay.classList.add("intro-done"), 500);
+    };
+    skipBtn?.addEventListener("click", finish);
+    // 애니메이션 완전 종료 후 DOM에서 숨김 (약 5초)
+    setTimeout(() => {
+        if (!removed) overlay.classList.add("intro-done");
+    }, 5200);
+})();
+
 // 상태 관리
 let state = {
     mode: "bank",           // "bank" or "exam"

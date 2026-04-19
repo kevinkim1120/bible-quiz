@@ -7,6 +7,55 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <!-- ===== 인트로 오버레이 (빛이 모이는 임팩트) ===== -->
+    <div id="intro-overlay" class="intro-overlay">
+        <div class="intro-sky"></div>
+        <div class="intro-particles">
+            <i style="--sx:-45vw;--sy:-40vh;--d:0s"></i>
+            <i style="--sx:-25vw;--sy:-48vh;--d:.05s"></i>
+            <i style="--sx:2vw;--sy:-50vh;--d:.10s"></i>
+            <i style="--sx:25vw;--sy:-46vh;--d:.15s"></i>
+            <i style="--sx:45vw;--sy:-38vh;--d:.20s"></i>
+            <i style="--sx:50vw;--sy:-15vh;--d:.25s"></i>
+            <i style="--sx:48vw;--sy:8vh;--d:.30s"></i>
+            <i style="--sx:45vw;--sy:28vh;--d:.35s"></i>
+            <i style="--sx:34vw;--sy:45vh;--d:.40s"></i>
+            <i style="--sx:14vw;--sy:50vh;--d:.45s"></i>
+            <i style="--sx:-6vw;--sy:48vh;--d:.50s"></i>
+            <i style="--sx:-25vw;--sy:42vh;--d:.55s"></i>
+            <i style="--sx:-42vw;--sy:30vh;--d:.60s"></i>
+            <i style="--sx:-50vw;--sy:5vh;--d:.65s"></i>
+            <i style="--sx:-48vw;--sy:-15vh;--d:.70s"></i>
+            <i style="--sx:-36vw;--sy:-28vh;--d:.22s"></i>
+            <i style="--sx:28vw;--sy:32vh;--d:.28s"></i>
+            <i style="--sx:-18vw;--sy:35vh;--d:.38s"></i>
+            <i style="--sx:18vw;--sy:-34vh;--d:.12s"></i>
+            <i style="--sx:-14vw;--sy:-22vh;--d:.18s"></i>
+        </div>
+        <div class="intro-shine"></div>
+        <div class="intro-flash"></div>
+        <div class="intro-cross-wrap">
+            <svg class="intro-cross" viewBox="0 0 100 140" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <linearGradient id="intro-gold" x1="0" x2="0" y1="0" y2="1">
+                        <stop offset="0" stop-color="#fff2b8"/>
+                        <stop offset=".45" stop-color="#f5d060"/>
+                        <stop offset="1" stop-color="#b8902a"/>
+                    </linearGradient>
+                </defs>
+                <rect x="42" y="8" width="16" height="124" rx="3" fill="url(#intro-gold)"/>
+                <rect x="16" y="46" width="68" height="16" rx="3" fill="url(#intro-gold)"/>
+                <rect x="46" y="12" width="4" height="116" rx="1.5" fill="#fff5c8" opacity="0.55"/>
+                <rect x="20" y="49" width="60" height="4" rx="1.5" fill="#fff5c8" opacity="0.45"/>
+            </svg>
+        </div>
+        <div class="intro-text">
+            <h1>&#x271E; 마가복음 퀴즈</h1>
+            <p>말씀 속으로 들어가세요</p>
+        </div>
+        <button type="button" class="intro-skip" id="intro-skip">SKIP &raquo;</button>
+    </div>
+
     <!-- 배경 빛 아우라 효과 -->
     <div class="aura-bg"></div>
     <!-- 성령의 빛 파티클 -->

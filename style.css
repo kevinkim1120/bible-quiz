@@ -1029,3 +1029,668 @@ body {
     .intro-particles, .intro-shine, .intro-flash, .intro-cross-wrap, .intro-text { animation: none; opacity: 1; }
 }
 
+/* ===================================================================
+   여정 모드 — 스테이지 맵 + 승천 엔딩
+   =================================================================== */
+
+/* 시작 화면: 여정 버튼 */
+.journey-btn {
+    display: block;
+    width: 100%;
+    margin-top: 10px;
+    background: linear-gradient(135deg, #3a2a55 0%, #1f1635 100%) !important;
+    border: 1px solid #a88bdc !important;
+    color: #f0c040 !important;
+    letter-spacing: 1px;
+    box-shadow: 0 0 18px rgba(168, 139, 220, 0.25), inset 0 0 12px rgba(240, 192, 64, 0.15);
+}
+.journey-btn:hover {
+    background: linear-gradient(135deg, #4c3772 0%, #2a1d46 100%) !important;
+    box-shadow: 0 0 26px rgba(168, 139, 220, 0.45), inset 0 0 16px rgba(240, 192, 64, 0.25);
+}
+.journey-progress-hint {
+    margin-top: 8px;
+    text-align: center;
+    font-size: 0.82rem;
+    color: #b8a07a;
+    min-height: 16px;
+    letter-spacing: 0.3px;
+}
+
+/* ===== 스테이지 맵 화면 ===== */
+.stage-map-screen {
+    padding: 20px 16px 40px !important;
+    align-items: flex-start !important;
+}
+.stage-map-wrap {
+    width: 100%;
+    max-width: 560px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    position: relative;
+    z-index: 2;
+}
+.stage-map-header {
+    text-align: center;
+    padding: 20px 16px;
+    background: linear-gradient(135deg, rgba(40, 28, 64, 0.88) 0%, rgba(24, 16, 40, 0.88) 100%);
+    border: 1px solid rgba(240, 192, 64, 0.35);
+    border-radius: 14px;
+    box-shadow: 0 8px 26px rgba(0, 0, 0, 0.5), inset 0 0 18px rgba(240, 192, 64, 0.07);
+}
+.stage-map-header h2 {
+    font-family: 'Georgia', serif;
+    font-size: 1.7rem;
+    color: #f0c040;
+    margin-bottom: 6px;
+    letter-spacing: 2px;
+    text-shadow: 0 0 10px rgba(240, 192, 64, 0.45);
+}
+.stage-map-sub {
+    color: #c9b88e;
+    font-size: 0.9rem;
+    margin-bottom: 14px;
+}
+.stage-map-progress {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+}
+.stage-map-progress-bar {
+    width: 80%;
+    max-width: 360px;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 4px;
+    overflow: hidden;
+    border: 1px solid rgba(240, 192, 64, 0.3);
+}
+#journey-bar-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #d4a030, #f0c040, #fff2b8);
+    box-shadow: 0 0 12px rgba(240, 192, 64, 0.6);
+    transition: width 0.6s ease-out;
+}
+#journey-progress-label {
+    color: #f0c040;
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+}
+
+/* 문제수 선택 픽커 */
+.stage-qcount {
+    margin-top: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+.qcount-label {
+    color: #c9b88e;
+    font-size: 0.78rem;
+    margin-right: 4px;
+    letter-spacing: 0.5px;
+}
+.qcount-btn {
+    background: rgba(60, 44, 110, 0.55);
+    color: #c9b88e;
+    border: 1px solid rgba(240, 192, 64, 0.3);
+    padding: 5px 14px;
+    border-radius: 16px;
+    cursor: pointer;
+    font-size: 0.76rem;
+    letter-spacing: 0.6px;
+    font-family: inherit;
+    transition: all 0.2s;
+}
+.qcount-btn:hover {
+    background: rgba(90, 70, 150, 0.7);
+    color: #f0c040;
+    border-color: rgba(240, 192, 64, 0.5);
+}
+.qcount-btn.selected {
+    background: linear-gradient(135deg, #d4a030, #8a6218);
+    color: #fffbe6;
+    border-color: #fff5c8;
+    box-shadow: 0 0 10px rgba(240, 192, 64, 0.45);
+}
+
+/* 노드 아래 문제 카운트 라벨 */
+.node-qcount {
+    position: absolute;
+    bottom: -14px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.58rem;
+    color: #a89278;
+    letter-spacing: 0.4px;
+    white-space: nowrap;
+    pointer-events: none;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.7);
+}
+
+/* 현재 위치(마지막 방문 스테이지) 표시 */
+.stage-node.here::before {
+    content: '';
+    position: absolute;
+    inset: -8px;
+    border: 2px dashed rgba(255, 242, 184, 0.75);
+    border-radius: 50%;
+    animation: here-rotate 9s linear infinite;
+    pointer-events: none;
+}
+@keyframes here-rotate {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+}
+
+/* 보드 */
+.stage-map-board {
+    position: relative;
+    min-height: 1550px;
+    padding: 10px 0;
+    background: linear-gradient(180deg,
+        rgba(20, 14, 42, 0.8) 0%,
+        rgba(32, 22, 60, 0.75) 30%,
+        rgba(44, 30, 78, 0.75) 70%,
+        rgba(60, 44, 110, 0.9) 100%);
+    border: 1px solid rgba(240, 192, 64, 0.2);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.5);
+}
+.stage-map-board::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+        radial-gradient(2px 2px at 12% 10%, rgba(255, 245, 180, 0.9), transparent 60%),
+        radial-gradient(1.5px 1.5px at 78% 20%, rgba(255, 245, 180, 0.8), transparent 60%),
+        radial-gradient(1.5px 1.5px at 40% 35%, rgba(255, 245, 180, 0.6), transparent 60%),
+        radial-gradient(2px 2px at 88% 50%, rgba(255, 245, 180, 0.7), transparent 60%),
+        radial-gradient(1.3px 1.3px at 22% 65%, rgba(255, 245, 180, 0.6), transparent 60%),
+        radial-gradient(1.8px 1.8px at 62% 80%, rgba(255, 245, 180, 0.8), transparent 60%);
+    opacity: 0.9;
+    pointer-events: none;
+    animation: star-twinkle 3.5s ease-in-out infinite alternate;
+}
+@keyframes star-twinkle {
+    from { opacity: 0.55; }
+    to   { opacity: 1; }
+}
+
+.stage-path {
+    position: absolute;
+    top: 90px;
+    left: 0;
+    width: 100%;
+    height: calc(100% - 110px);
+    pointer-events: none;
+    z-index: 1;
+}
+
+.heaven-gate {
+    position: absolute;
+    top: 6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 160px;
+    height: 140px;
+    z-index: 3;
+    filter: drop-shadow(0 0 18px rgba(240, 192, 64, 0.75));
+    animation: gate-pulse 3.4s ease-in-out infinite alternate;
+}
+@keyframes gate-pulse {
+    from { filter: drop-shadow(0 0 14px rgba(240, 192, 64, 0.45)); }
+    to   { filter: drop-shadow(0 0 28px rgba(240, 192, 64, 0.95)); }
+}
+.heaven-gate svg { width: 100%; height: 100%; }
+
+/* 노드 컨테이너 */
+.stage-nodes {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+}
+.stage-node {
+    position: absolute;
+    width: 62px;
+    height: 62px;
+    transform: translate(-50%, -50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: transform 0.25s ease-out, box-shadow 0.25s ease-out;
+    user-select: none;
+}
+.stage-node .node-bubble {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    font-family: 'Georgia', serif;
+    font-weight: 700;
+    border: 2px solid;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.55);
+    transition: all 0.25s ease-out;
+}
+.stage-node .node-ch {
+    font-size: 1.1rem;
+    line-height: 1;
+}
+.stage-node .node-label {
+    font-size: 0.55rem;
+    margin-top: 2px;
+    opacity: 0.88;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+}
+
+/* 잠금 상태 */
+.stage-node.locked { cursor: not-allowed; }
+.stage-node.locked .node-bubble {
+    background: linear-gradient(135deg, #2a2333 0%, #191421 100%);
+    border-color: #483d55;
+    color: #6b6273;
+}
+.stage-node.locked .node-bubble::after {
+    content: '🔒';
+    position: absolute;
+    font-size: 0.65rem;
+    bottom: -4px;
+    right: -4px;
+    background: #2a2333;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #483d55;
+}
+
+/* 완료 상태 */
+.stage-node.cleared .node-bubble {
+    background: linear-gradient(135deg, #d4a030 0%, #8a6218 100%);
+    border-color: #fff5c8;
+    color: #fffbe6;
+    box-shadow: 0 0 14px rgba(240, 192, 64, 0.6), 0 4px 12px rgba(0, 0, 0, 0.55);
+}
+.stage-node.cleared .node-bubble::after {
+    content: '✓';
+    position: absolute;
+    font-size: 0.7rem;
+    bottom: -4px;
+    right: -4px;
+    background: #2e7d32;
+    color: #fff;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1.5px solid #fff2b8;
+    font-weight: 900;
+}
+
+/* 현재(진행 가능) 스테이지 */
+.stage-node.current .node-bubble {
+    background: linear-gradient(135deg, #6c4fb8 0%, #3d2a7a 100%);
+    border-color: #f0c040;
+    color: #fff2b8;
+    animation: current-ring 1.8s ease-in-out infinite alternate;
+}
+@keyframes current-ring {
+    from { box-shadow: 0 0 12px rgba(240, 192, 64, 0.6), 0 0 0 0 rgba(240, 192, 64, 0.4); }
+    to   { box-shadow: 0 0 22px rgba(240, 192, 64, 0.9), 0 0 0 10px rgba(240, 192, 64, 0); }
+}
+.stage-node.current:hover,
+.stage-node.cleared:hover {
+    transform: translate(-50%, -50%) scale(1.08);
+}
+
+/* 예수 캐릭터 */
+.jesus-walker {
+    position: absolute;
+    width: 70px;
+    height: 96px;
+    transform: translate(-50%, -65%);
+    z-index: 4;
+    transition: top 0.9s cubic-bezier(0.4, 0.0, 0.2, 1),
+                left 0.9s cubic-bezier(0.4, 0.0, 0.2, 1);
+    filter: drop-shadow(0 0 12px rgba(240, 192, 64, 0.55));
+    pointer-events: none;
+    animation: jesus-bob 2.4s ease-in-out infinite alternate;
+}
+@keyframes jesus-bob {
+    from { transform: translate(-50%, -65%) translateY(0); }
+    to   { transform: translate(-50%, -65%) translateY(-6px); }
+}
+.jesus-walker svg { width: 100%; height: 100%; }
+
+.stage-map-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    padding: 0 10px;
+}
+.stage-map-actions button { flex: 1 1 140px; max-width: 220px; }
+.stage-reset-btn {
+    background: linear-gradient(135deg, #4a2030 0%, #2a1018 100%) !important;
+    border-color: #8a3a52 !important;
+    color: #f0a0b0 !important;
+}
+
+/* ===== 스테이지 퀴즈 모드 HUD (기존 quiz-screen 재활용) ===== */
+.stage-hud {
+    display: block;
+    text-align: center;
+    padding: 8px 10px;
+    margin: -4px 0 10px;
+    background: linear-gradient(90deg, rgba(108, 79, 184, 0.25), rgba(240, 192, 64, 0.2), rgba(108, 79, 184, 0.25));
+    border: 1px solid rgba(240, 192, 64, 0.4);
+    border-radius: 8px;
+}
+.stage-hud .stage-chapter {
+    font-family: 'Georgia', serif;
+    font-size: 1rem;
+    color: #f0c040;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+.stage-hud .stage-title-small {
+    color: #cdbd9a;
+    font-size: 0.78rem;
+    margin-top: 2px;
+    letter-spacing: 0.4px;
+}
+
+/* ===== 스테이지 클리어 미니 결과 ===== */
+.stage-clear-toast {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.85);
+    z-index: 999;
+    background: linear-gradient(135deg, rgba(40, 28, 64, 0.96), rgba(24, 16, 40, 0.96));
+    border: 2px solid #f0c040;
+    border-radius: 14px;
+    padding: 28px 36px;
+    text-align: center;
+    box-shadow: 0 0 48px rgba(240, 192, 64, 0.7);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease-out, transform 0.4s ease-out;
+    min-width: 280px;
+    max-width: 92vw;
+}
+.stage-clear-toast.active {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+    pointer-events: auto;
+}
+.stage-clear-toast h3 {
+    font-family: 'Georgia', serif;
+    color: #f0c040;
+    font-size: 1.3rem;
+    margin-bottom: 8px;
+    letter-spacing: 1.5px;
+    text-shadow: 0 0 8px rgba(240, 192, 64, 0.6);
+}
+.stage-clear-toast .clear-score {
+    font-size: 2.1rem;
+    color: #fff2b8;
+    font-weight: 700;
+    margin: 6px 0 10px;
+    font-family: 'Georgia', serif;
+}
+.stage-clear-toast .clear-msg {
+    color: #d6c8a5;
+    margin-bottom: 16px;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+.stage-clear-toast .clear-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.stage-clear-toast button {
+    font-family: 'Georgia', serif;
+    padding: 10px 22px;
+    border-radius: 8px;
+    border: 2px solid;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 1px;
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+.stage-clear-toast .clear-continue {
+    background: linear-gradient(135deg, #d4a030, #8a6218);
+    color: #fffbe6;
+    border-color: #fff5c8;
+}
+.stage-clear-toast .clear-continue:hover {
+    background: linear-gradient(135deg, #f0c040, #a88230);
+    box-shadow: 0 0 14px rgba(240, 192, 64, 0.7);
+}
+.stage-clear-toast .clear-retry {
+    background: transparent;
+    color: #c9b88e;
+    border-color: #7a6840;
+}
+.stage-clear-toast .clear-retry:hover {
+    background: rgba(240, 192, 64, 0.1);
+    color: #f0c040;
+}
+
+.stage-clear-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 998;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease-out;
+}
+.stage-clear-backdrop.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* ===== 승천 엔딩 ===== */
+.journey-complete-screen {
+    padding: 0 !important;
+    align-items: stretch !important;
+    justify-content: stretch !important;
+}
+.ascension-scene {
+    position: relative;
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 30px 20px 40px;
+    overflow: hidden;
+}
+.ascension-sky {
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(ellipse at 50% 30%, #fff5c8 0%, #f0c040 18%, #d4a030 35%, #5a3a80 65%, #1e0f3c 100%);
+    animation: asc-sky-glow 6s ease-in-out infinite alternate;
+    z-index: 0;
+}
+@keyframes asc-sky-glow {
+    from { filter: brightness(0.85); }
+    to   { filter: brightness(1.12); }
+}
+.ascension-rays {
+    position: absolute;
+    inset: 0;
+    background:
+        conic-gradient(from 0deg at 50% 28%,
+            rgba(255, 245, 200, 0.22) 0deg,
+            transparent 12deg,
+            rgba(255, 245, 200, 0.12) 26deg,
+            transparent 40deg,
+            rgba(255, 245, 200, 0.2) 55deg,
+            transparent 70deg,
+            rgba(255, 245, 200, 0.14) 88deg,
+            transparent 100deg,
+            rgba(255, 245, 200, 0.2) 120deg,
+            transparent 135deg,
+            rgba(255, 245, 200, 0.12) 150deg,
+            transparent 170deg,
+            rgba(255, 245, 200, 0.2) 190deg,
+            transparent 210deg,
+            rgba(255, 245, 200, 0.14) 230deg,
+            transparent 250deg,
+            rgba(255, 245, 200, 0.2) 270deg,
+            transparent 290deg,
+            rgba(255, 245, 200, 0.1) 310deg,
+            transparent 335deg,
+            rgba(255, 245, 200, 0.2) 360deg);
+    animation: asc-rays-spin 24s linear infinite;
+    z-index: 1;
+    opacity: 0.75;
+    mix-blend-mode: screen;
+}
+@keyframes asc-rays-spin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+}
+.ascension-gate {
+    position: relative;
+    z-index: 2;
+    width: 200px;
+    height: 220px;
+    margin-top: 20px;
+    filter: drop-shadow(0 0 32px rgba(255, 245, 200, 0.95));
+    animation: asc-gate-pulse 3.5s ease-in-out infinite alternate;
+}
+@keyframes asc-gate-pulse {
+    from { filter: drop-shadow(0 0 24px rgba(255, 245, 200, 0.6)); }
+    to   { filter: drop-shadow(0 0 44px rgba(255, 245, 200, 1)); }
+}
+.ascension-gate svg { width: 100%; height: 100%; }
+
+.ascension-jesus {
+    position: absolute;
+    width: 120px;
+    height: 170px;
+    left: 50%;
+    bottom: 18%;
+    transform: translateX(-50%);
+    z-index: 3;
+    filter: drop-shadow(0 0 24px rgba(255, 245, 200, 0.85));
+    animation: asc-rise 5s cubic-bezier(0.4, 0.0, 0.2, 1) forwards;
+}
+@keyframes asc-rise {
+    0% {
+        bottom: 8%;
+        opacity: 0.3;
+        transform: translateX(-50%) scale(0.85);
+    }
+    25% {
+        opacity: 1;
+    }
+    70% {
+        bottom: 55%;
+        opacity: 1;
+        transform: translateX(-50%) scale(1);
+    }
+    100% {
+        bottom: 66%;
+        opacity: 0.85;
+        transform: translateX(-50%) scale(0.92);
+    }
+}
+.ascension-jesus svg { width: 100%; height: 100%; }
+
+.ascension-text {
+    position: relative;
+    z-index: 4;
+    margin-top: auto;
+    padding: 22px 18px;
+    background: linear-gradient(135deg, rgba(20, 12, 36, 0.75), rgba(12, 8, 24, 0.85));
+    border: 1px solid rgba(240, 192, 64, 0.5);
+    border-radius: 14px;
+    text-align: center;
+    max-width: 480px;
+    width: 100%;
+    margin-top: 30px;
+    box-shadow: 0 10px 36px rgba(0, 0, 0, 0.7), inset 0 0 18px rgba(240, 192, 64, 0.08);
+    opacity: 0;
+    animation: asc-text-in 1s ease-out 2.5s forwards;
+}
+@keyframes asc-text-in {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+.ascension-text h2 {
+    font-family: 'Georgia', serif;
+    font-size: 1.6rem;
+    color: #f0c040;
+    margin-bottom: 14px;
+    letter-spacing: 2px;
+    text-shadow: 0 0 12px rgba(240, 192, 64, 0.7);
+}
+.ascension-verse {
+    font-style: italic;
+    color: #e0d0a8;
+    margin-bottom: 12px;
+    line-height: 1.6;
+    font-size: 0.9rem;
+}
+.ascension-line {
+    color: #fff2b8;
+    font-size: 0.98rem;
+    margin-bottom: 4px;
+    font-weight: 600;
+}
+.ascension-sub {
+    color: #b8a07a;
+    font-size: 0.85rem;
+    line-height: 1.5;
+}
+.ascension-actions {
+    position: relative;
+    z-index: 4;
+    display: flex;
+    gap: 12px;
+    margin-top: 16px;
+    flex-wrap: wrap;
+    justify-content: center;
+    opacity: 0;
+    animation: asc-text-in 1s ease-out 3.2s forwards;
+}
+.ascension-actions button { min-width: 160px; }
+
+@media (max-width: 600px) {
+    .stage-map-board { min-height: 1350px; }
+    .stage-node { width: 54px; height: 54px; }
+    .stage-node .node-ch { font-size: 0.95rem; }
+    .stage-node .node-label { font-size: 0.5rem; }
+    .jesus-walker { width: 58px; height: 80px; }
+    .heaven-gate { width: 130px; height: 115px; }
+    .ascension-gate { width: 160px; height: 180px; }
+    .ascension-jesus { width: 100px; height: 140px; }
+    .ascension-text h2 { font-size: 1.3rem; }
+    .ascension-verse { font-size: 0.82rem; }
+}

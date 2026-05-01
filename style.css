@@ -469,6 +469,18 @@ body {
     pointer-events: none;
 }
 
+.option-btn.selected {
+    border-color: #c9a96e;
+    background: rgba(240, 192, 64, 0.18);
+    color: #f0c040;
+    box-shadow: 0 0 0 1px rgba(240, 192, 64, 0.35) inset;
+}
+
+.multi-submit-btn {
+    margin-top: 8px;
+    align-self: stretch;
+}
+
 /* ===== 주관식 ===== */
 .subjective-area {
     margin-top: 5px;

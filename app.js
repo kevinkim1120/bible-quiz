@@ -26,7 +26,8 @@ let state = {
     score: 0,
     answers: [],
     timer: null,
-    timeLeft: 30
+    timeLeft: 30,
+    multiSelected: new Set()  // 복수정답 선택 상태
 };
 
 // DOM 요소
@@ -197,6 +198,9 @@ function loadQuestion() {
         elements.options.classList.remove("hidden");
         elements.options.innerHTML = "";
 
+        const isMulti = Array.isArray(q.answer);
+        state.multiSelected = new Set();
+
         // 보기 순서 랜덤화
         const indices = q.options.map((_, i) => i);
         const shuffledIndices = shuffle(indices);
@@ -207,9 +211,22 @@ function loadQuestion() {
             btn.className = "option-btn";
             btn.textContent = `${["A", "B", "C", "D"][shuffledIndices.indexOf(origIdx)]}. ${option}`;
             btn.dataset.origIndex = origIdx;
-            btn.addEventListener("click", () => selectAnswer(origIdx, shuffledIndices));
+            if (isMulti) {
+                btn.addEventListener("click", () => toggleMultiOption(btn, origIdx));
+            } else {
+                btn.addEventListener("click", () => selectAnswer(origIdx, shuffledIndices));
+            }
             elements.options.appendChild(btn);
         });
+
+        if (isMulti) {
+            const submitBtn = document.createElement("button");
+            submitBtn.id = "multi-submit-btn";
+            submitBtn.className = "primary-btn submit-btn multi-submit-btn";
+            submitBtn.textContent = "정답 제출";
+            submitBtn.addEventListener("click", () => submitMultiAnswer());
+            elements.options.appendChild(submitBtn);
+        }
     }
 
     // 피드백 숨기기
@@ -238,6 +255,8 @@ function startTimer() {
             const q = state.questions[state.currentIndex];
             if (q.type === "subjective") {
                 handleSubjectiveResult("", true);
+            } else if (Array.isArray(q.answer)) {
+                submitMultiAnswer(true);
             } else {
                 selectAnswer(-1, []);
             }
@@ -290,6 +309,80 @@ function selectAnswer(selectedOrigIndex, shuffledIndices) {
         question: q.question,
         selected: selectedOrigIndex >= 0 ? q.options[selectedOrigIndex] : "시간 초과",
         correct: q.options[q.answer],
+        isCorrect: isCorrect,
+        verse: q.verse,
+        type: q.type
+    });
+}
+
+function toggleMultiOption(btn, origIdx) {
+    if (btn.classList.contains("disabled")) return;
+    if (state.multiSelected.has(origIdx)) {
+        state.multiSelected.delete(origIdx);
+        btn.classList.remove("selected");
+    } else {
+        state.multiSelected.add(origIdx);
+        btn.classList.add("selected");
+    }
+}
+
+function submitMultiAnswer(isTimeout = false) {
+    clearInterval(state.timer);
+
+    const q = state.questions[state.currentIndex];
+    const buttons = document.querySelectorAll(".option-btn");
+    const correct = new Set(q.answer);
+    const selected = state.multiSelected;
+
+    const isCorrect = !isTimeout
+        && selected.size === correct.size
+        && [...selected].every(i => correct.has(i));
+
+    // 모든 버튼/제출 버튼 비활성화
+    buttons.forEach(btn => btn.classList.add("disabled"));
+    const submitBtn = document.getElementById("multi-submit-btn");
+    if (submitBtn) submitBtn.disabled = true;
+
+    // 정답/오답 표시 (원래 인덱스 기준)
+    buttons.forEach(btn => {
+        const origIdx = parseInt(btn.dataset.origIndex);
+        if (isNaN(origIdx)) return;
+        if (correct.has(origIdx)) {
+            btn.classList.add("correct");
+        }
+        if (selected.has(origIdx) && !correct.has(origIdx)) {
+            btn.classList.add("wrong");
+        }
+    });
+
+    // 점수 및 피드백
+    if (isCorrect) {
+        state.score++;
+        elements.feedbackText.textContent = "정답입니다!";
+        elements.feedbackText.style.color = "#7ddf7d";
+    } else if (isTimeout) {
+        elements.feedbackText.textContent = "시간 초과!";
+        elements.feedbackText.style.color = "#f08080";
+    } else {
+        elements.feedbackText.textContent = "틀렸습니다!";
+        elements.feedbackText.style.color = "#f08080";
+    }
+
+    elements.scoreDisplay.textContent = `점수: ${state.score}`;
+    elements.bibleVerse.textContent = q.verse;
+    elements.feedback.classList.remove("hidden");
+
+    updateNextButton();
+
+    // 답변 기록
+    const selectedLabel = isTimeout
+        ? "시간 초과"
+        : ([...selected].sort((a, b) => a - b).map(i => q.options[i]).join(", ") || "선택 안함");
+    const correctLabel = q.answer.map(i => q.options[i]).join(", ");
+    state.answers.push({
+        question: q.question,
+        selected: selectedLabel,
+        correct: correctLabel,
         isCorrect: isCorrect,
         verse: q.verse,
         type: q.type

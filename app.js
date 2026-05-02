@@ -103,10 +103,41 @@ document.getElementById("start-btn").addEventListener("click", () => {
     startQuiz();
 });
 
-// 기출문제 시작
+// 예상문제 1
 document.getElementById("exam-btn").addEventListener("click", () => {
     state.mode = "exam";
     startQuiz();
+});
+
+// 예상문제 2 (NEW)
+document.getElementById("exam2-btn").addEventListener("click", () => {
+    state.mode = "exam2";
+    startQuiz();
+});
+
+// 갤러리
+const galleryModal = document.getElementById("gallery-modal");
+function openGallery() {
+    if (!galleryModal) return;
+    galleryModal.hidden = false;
+    galleryModal.setAttribute("aria-hidden", "false");
+    document.body.classList.add("gallery-open");
+    requestAnimationFrame(() => galleryModal.classList.add("show"));
+}
+function closeGallery() {
+    if (!galleryModal) return;
+    galleryModal.classList.remove("show");
+    galleryModal.setAttribute("aria-hidden", "true");
+    document.body.classList.remove("gallery-open");
+    setTimeout(() => { galleryModal.hidden = true; }, 260);
+}
+document.getElementById("gallery-btn")?.addEventListener("click", openGallery);
+document.getElementById("gallery-close")?.addEventListener("click", closeGallery);
+galleryModal?.querySelectorAll("[data-gallery-close]").forEach(el => {
+    el.addEventListener("click", closeGallery);
+});
+document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && galleryModal && !galleryModal.hidden) closeGallery();
 });
 
 // 다시 도전
@@ -134,8 +165,11 @@ function startQuiz() {
     let selected;
 
     if (state.mode === "exam") {
-        // 기출문제 모드: 기출 10문제 전체 풀기
+        // 예상문제 1: 전체 풀기
         selected = shuffle([...examQuestions]);
+    } else if (state.mode === "exam2") {
+        // 예상문제 2: 전체 풀기
+        selected = shuffle([...examQuestions2]);
     } else {
         // 문제은행 모드: 난이도로 필터링 후 랜덤 10문제 출제
         const pool = bankQuestions.filter(q => q.difficulty === state.difficulty);
@@ -682,7 +716,7 @@ function openStageMap() {
 }
 
 function chapterPool(ch) {
-    return [...bankQuestions, ...examQuestions].filter(q => q.chapter === ch);
+    return [...bankQuestions, ...examQuestions, ...examQuestions2].filter(q => q.chapter === ch);
 }
 
 function renderStageMap() {

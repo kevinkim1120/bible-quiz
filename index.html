@@ -10,6 +10,9 @@
     <!-- ===== 인트로 오버레이 (빛이 모이는 임팩트) ===== -->
     <div id="intro-overlay" class="intro-overlay">
         <div class="intro-sky"></div>
+        <div class="intro-mark-road" aria-hidden="true">
+            <img src="mark_road.png" alt="" />
+        </div>
         <div class="intro-particles">
             <i style="--sx:-45vw;--sy:-40vh;--d:0s"></i>
             <i style="--sx:-25vw;--sy:-48vh;--d:.05s"></i>
@@ -189,8 +192,15 @@
                     </div>
                 </div>
                 <button id="start-btn" class="primary-btn">퀴즈 시작</button>
-                <button id="exam-btn" class="secondary-btn exam-btn">&#x1F4DC; 예상문제 풀기</button>
+                <div class="exam-row">
+                    <button id="exam-btn" class="secondary-btn exam-btn exam-btn-1">&#x1F4DC; 예상문제 1</button>
+                    <button id="exam2-btn" class="secondary-btn exam-btn exam-btn-2">
+                        &#x1F4DC; 예상문제 2
+                        <span class="badge-new">NEW</span>
+                    </button>
+                </div>
                 <button id="journey-btn" class="secondary-btn journey-btn">&#x271E; 여정 모드 (마가복음 1~16장)</button>
+                <button id="gallery-btn" class="secondary-btn gallery-btn">&#x1F5BC; 갤러리</button>
                 <div id="journey-progress-hint" class="journey-progress-hint"></div>
                 <div class="page-ornament bottom"></div>
             </div>
@@ -595,6 +605,24 @@
 
     <!-- 페이지 넘김 효과 오버레이 -->
     <div id="page-turn-overlay" class="page-turn-overlay"></div>
+
+    <!-- ===== 갤러리 모달 ===== -->
+    <div id="gallery-modal" class="gallery-modal" hidden aria-hidden="true">
+        <div class="gallery-backdrop" data-gallery-close></div>
+        <div class="gallery-frame" role="dialog" aria-modal="true" aria-label="갤러리">
+            <button type="button" class="gallery-close" id="gallery-close" aria-label="갤러리 닫기">&times;</button>
+            <div class="gallery-stage" id="gallery-stage">
+                <figure class="gallery-item active" data-gallery-item>
+                    <img src="mark_road.png" alt="마가복음 여정 지도" />
+                    <figcaption>마가복음 여정 — 갈릴리에서 예루살렘까지</figcaption>
+                </figure>
+            </div>
+            <div class="gallery-meta" id="gallery-meta">
+                <span class="gallery-counter" id="gallery-counter">1 / 1</span>
+                <span class="gallery-hint">갤러리는 추후 더 많은 이미지가 추가될 예정입니다.</span>
+            </div>
+        </div>
+    </div>
 
     <script src="questions.js"></script>
     <script src="app.js"></script>

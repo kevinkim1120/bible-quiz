@@ -1706,3 +1706,233 @@ body {
     .ascension-text h2 { font-size: 1.3rem; }
     .ascension-verse { font-size: 0.82rem; }
 }
+
+/* ===================================================================
+   인트로: mark_road.png 위→아래 패닝 레이어
+   =================================================================== */
+.intro-mark-road {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    opacity: 0;
+    animation: intro-mark-road-fade 4.5s ease-out 0.15s forwards;
+    z-index: 1;
+}
+.intro-mark-road img {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    /* 가로/세로 모두 화면을 충분히 덮도록 — aspect 1024:1536(=2:3) 기준 */
+    width: max(100vw, calc(100vh * 0.667));
+    min-height: 130vh;
+    height: auto;
+    transform: translate(-50%, 0);
+    animation: intro-mark-road-pan 4.6s cubic-bezier(0.4, 0, 0.2, 1) 0.15s forwards;
+    filter: brightness(0.92) contrast(1.05) saturate(0.9);
+    user-select: none;
+    -webkit-user-drag: none;
+}
+@keyframes intro-mark-road-fade {
+    0%   { opacity: 0; }
+    14%  { opacity: 0.72; }
+    62%  { opacity: 0.55; }
+    100% { opacity: 0; }
+}
+@keyframes intro-mark-road-pan {
+    0%   { transform: translate(-50%, 0); }
+    100% { transform: translate(-50%, -28%); }
+}
+.intro-overlay.skip .intro-mark-road,
+.intro-overlay.skip .intro-mark-road img {
+    animation-play-state: paused;
+}
+@media (prefers-reduced-motion: reduce) {
+    .intro-mark-road { animation: none; opacity: 0.4; }
+    .intro-mark-road img { animation: none; }
+}
+
+/* ===================================================================
+   시작 화면: 예상문제 1 / 2 두 버튼 그룹 + 갤러리 버튼
+   =================================================================== */
+.exam-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 10px;
+}
+.exam-row .exam-btn {
+    margin-top: 0;
+    width: 100%;
+    position: relative;
+}
+.exam-btn-2 {
+    background: linear-gradient(135deg, rgba(240, 192, 64, 0.18), rgba(240, 192, 64, 0.08));
+    border-color: rgba(240, 192, 64, 0.55);
+}
+.exam-btn-2:hover {
+    background: linear-gradient(135deg, rgba(240, 192, 64, 0.28), rgba(240, 192, 64, 0.12));
+}
+.badge-new {
+    display: inline-block;
+    margin-left: 4px;
+    padding: 1px 6px 2px;
+    background: linear-gradient(135deg, #f5d060, #b8902a);
+    color: #2a1d0a;
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    border-radius: 999px;
+    vertical-align: middle;
+    box-shadow: 0 0 10px rgba(240, 192, 64, 0.45);
+    transform: translateY(-1px);
+}
+.gallery-btn {
+    display: block;
+    width: 100%;
+    margin-top: 10px;
+}
+
+@media (max-width: 420px) {
+    .exam-row {
+        grid-template-columns: 1fr;
+        gap: 6px;
+    }
+}
+
+/* ===================================================================
+   갤러리 모달
+   =================================================================== */
+.gallery-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 8500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+}
+.gallery-modal.show {
+    opacity: 1;
+}
+.gallery-modal[hidden] {
+    display: none !important;
+}
+.gallery-backdrop {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center, rgba(15, 10, 5, 0.92) 0%, rgba(0, 0, 0, 0.96) 80%);
+    cursor: pointer;
+}
+.gallery-frame {
+    position: relative;
+    z-index: 1;
+    width: min(880px, 96vw);
+    max-height: 92vh;
+    background: linear-gradient(160deg, #2a1d0e 0%, #1a1108 100%);
+    border: 1px solid rgba(240, 192, 64, 0.45);
+    border-radius: 14px;
+    box-shadow:
+        0 0 0 1px rgba(0, 0, 0, 0.5) inset,
+        0 18px 60px rgba(0, 0, 0, 0.6),
+        0 0 80px rgba(240, 192, 64, 0.18);
+    padding: 18px 18px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    transform: translateY(8px) scale(0.98);
+    transition: transform 0.32s cubic-bezier(0.25, 1, 0.35, 1);
+}
+.gallery-modal.show .gallery-frame {
+    transform: translateY(0) scale(1);
+}
+.gallery-close {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    width: 36px;
+    height: 36px;
+    border: 1px solid rgba(240, 192, 64, 0.35);
+    background: rgba(0, 0, 0, 0.45);
+    color: #f0c040;
+    font-size: 1.4rem;
+    line-height: 1;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background 0.18s, border-color 0.18s, color 0.18s, transform 0.18s;
+    z-index: 2;
+}
+.gallery-close:hover {
+    background: rgba(240, 192, 64, 0.18);
+    border-color: rgba(240, 192, 64, 0.7);
+    color: #fff5c8;
+    transform: scale(1.05);
+}
+.gallery-stage {
+    flex: 1;
+    overflow: auto;
+    background: #0d0905;
+    border-radius: 8px;
+    border: 1px solid rgba(240, 192, 64, 0.18);
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    -webkit-overflow-scrolling: touch;
+}
+.gallery-item {
+    margin: 0;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+.gallery-item.active {
+    display: flex;
+}
+.gallery-item img {
+    display: block;
+    max-width: 100%;
+    width: auto;
+    height: auto;
+    max-height: calc(92vh - 110px);
+    object-fit: contain;
+    border-radius: 6px;
+    background: #000;
+}
+.gallery-item figcaption {
+    color: #e0cca8;
+    font-size: 0.82rem;
+    letter-spacing: 0.06em;
+    padding: 8px 6px 4px;
+    text-align: center;
+    width: 100%;
+}
+.gallery-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: rgba(240, 192, 64, 0.85);
+    font-size: 0.74rem;
+    letter-spacing: 0.08em;
+    padding: 0 4px;
+}
+.gallery-counter {
+    font-weight: 700;
+}
+.gallery-hint {
+    color: rgba(224, 204, 168, 0.6);
+    font-style: italic;
+}
+body.gallery-open {
+    overflow: hidden;
+}
+
+@media (max-width: 600px) {
+    .gallery-modal { padding: 12px; }
+    .gallery-frame { padding: 14px 12px 10px; }
+    .gallery-item img { max-height: calc(92vh - 130px); }
+    .gallery-meta { flex-direction: column; gap: 4px; align-items: flex-start; }
+    .gallery-hint { font-size: 0.68rem; }
+}
